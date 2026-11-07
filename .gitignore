@@ -20,6 +20,12 @@ venv/
 .coverage
 htmlcov/
 
+# Local registry data (recreated from seed_registry.sh)
+services/registry-service/registry.db
+services/registry-service/registry.db-journal
+services/registry-service/registry.db-wal
+services/registry-service/registry.db-shm
+
 # OS and editors
 .DS_Store
 .idea/
