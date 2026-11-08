@@ -117,6 +117,11 @@ uv run python -m unittest discover -s tests -v
 Tests use temporary SQLite databases populated from the SQL in `seed_registry.sh`.
 They do not run the shell script or modify the local `registry.db`.
 
+The `Registry tests` GitHub Actions workflow runs the same tests on Python 3.12
+and 3.13 for pull requests and pushes to `main`, using `uv.lock`. It also supports
+manual execution from the Actions tab. No database setup or credentials are
+required for the tests. The workflow must be published to GitHub to run there.
+
 ## Read performance
 
 Start a separate server with the current code:
