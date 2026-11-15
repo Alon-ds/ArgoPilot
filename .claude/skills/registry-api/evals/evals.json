@@ -1,0 +1,28 @@
+{
+  "skill_name": "registry-api",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Add a GET /v1/farms/{id}/area endpoint that returns the total area of the farm's plots.",
+      "expected_output": "A registry endpoint with integration coverage for the total, an empty farm, and the applicable problem responses.",
+      "assertions": [
+        "A farm with plots returns 200 and the exact sum of its own plots' area_m2 values.",
+        "An existing farm without plots returns 200 and zero.",
+        "An unknown farm UUID returns 404, application/problem+json, and NOT_FOUND.",
+        "A malformed UUID returns 422, application/problem+json, and VALIDATION.",
+        "A database failure returns 503, application/problem+json, UNAVAILABLE, and Retry-After.",
+        "Integration tests cover each of these cases and the repository's registry test command passes."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Explain what available_water_mm_per_m means.",
+      "expected_output": "A short conceptual explanation of the soil property and its units.",
+      "assertions": [
+        "The registry-api skill is not loaded for this conceptual question.",
+        "The answer explains that the value represents plant-available water in millimeters per meter of soil depth.",
+        "No project files are changed."
+      ]
+    }
+  ]
+}
