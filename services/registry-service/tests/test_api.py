@@ -1,6 +1,7 @@
 """API integration tests using isolated SQLite databases and in-process ASGI."""
 
 import json
+import shutil
 import sqlite3
 import unittest
 from contextlib import ExitStack, closing
@@ -11,10 +12,9 @@ from unittest.mock import patch
 from urllib.parse import urlsplit
 from uuid import UUID, uuid4
 
-import catalogs
-import farms
-import plots
-from database import connect_database
+from database import connect_database, create_registry_engine
+from sqlalchemy import text
+from sqlalchemy.exc import ResourceClosedError
 from main import app
 
 
@@ -22,24 +22,26 @@ class RegistryTests(unittest.IsolatedAsyncioTestCase):
     def setUp(self):
         self.stack = ExitStack()
         self.addCleanup(self.stack.close)
-        directory = self.stack.enter_context(TemporaryDirectory())
-        self.database = Path(directory) / "test.db"
-        # Execute only the SQL in an isolated file; never run the shell script.
-        seed = (Path(__file__).resolve().parents[1] / "seed_registry.sh").read_text()
-        sql = seed.split("<<'SQL'\n", 1)[1].split("\nSQL", 1)[0]
-        with closing(sqlite3.connect(self.database)) as connection:
-            connection.executescript(sql)
-        for module in (catalogs, farms, plots):
-            self.stack.enter_context(
-                patch.object(module, "connect_database", lambda: connect_database(self.database))
-            )
-        with connect_database(self.database) as connection:
-            self.sample = dict(connection.execute("SELECT * FROM plots LIMIT 1").fetchone())
+        self.engine = self.make_test_engine()
+        self.addCleanup(self.engine.dispose)
+        self.stack.enter_context(patch("database.get_engine", lambda: self.engine))
+        with connect_database() as connection:
+            self.sample = dict(connection.execute(text("SELECT * FROM plots LIMIT 1")).mappings().one())
             self.other_farm = connection.execute(
-                "SELECT id FROM farms WHERE id != ?", (self.sample["farm_id"],)
-            ).fetchone()[0]
+                text("SELECT id FROM farms WHERE id != :id"), {"id": self.sample["farm_id"]}
+            ).scalars().first()
         self.payload = {key: value for key, value in self.sample.items() if key != "id"}
         self.payload["name"] = "New plot"
+
+    def make_test_engine(self):
+        directory = self.stack.enter_context(TemporaryDirectory())
+        self.database = Path(directory) / "test.db"
+        service = Path(__file__).resolve().parents[1]
+        seed = (service / "seed_registry.sh").read_text()
+        ddl = seed.split("<<'SQL'\n", 1)[1].split("\nSQL", 1)[0]
+        with closing(sqlite3.connect(self.database)) as connection:
+            connection.executescript(ddl + "\n" + (service / "seed_data.sql").read_text() + "\nCOMMIT;")
+        return create_registry_engine(f"sqlite:///{self.database}")
 
     async def request(self, method, url, payload=None, raw=None):
         url = urlsplit(url)
@@ -105,8 +107,8 @@ class RegistryTests(unittest.IsolatedAsyncioTestCase):
         status, _, updated = await self.request("PATCH", path, {"name": "Updated"})
         self.assertEqual((status, updated), (200, {**farm, "name": "Updated"}))
         self.assertEqual((await self.request("PATCH", path, {}))[2], updated)
-        with connect_database(self.database) as connection:
-            self.assertEqual(connection.execute("SELECT name FROM farms WHERE id = ?", (farm["id"],)).fetchone()[0], "Updated")
+        with connect_database() as connection:
+            self.assertEqual(connection.execute(text("SELECT name FROM farms WHERE id = :id"), {"id": farm["id"]}).scalar_one(), "Updated")
         self.assertEqual((await self.request("DELETE", path)), (204, {}, None))
         for method in ("GET", "PATCH", "DELETE"):
             self.assert_problem(await self.request(method, path, {} if method == "PATCH" else None), 404, "NOT_FOUND")
@@ -130,8 +132,8 @@ class RegistryTests(unittest.IsolatedAsyncioTestCase):
         status, _, updated = await self.request("PATCH", path, {"area_m2": 2222})
         self.assertEqual((status, updated), (200, {**plot, "area_m2": 2222}))
         self.assertEqual((await self.request("PATCH", path, {}))[2], updated)
-        with connect_database(self.database) as connection:
-            self.assertEqual(connection.execute("SELECT area_m2 FROM plots WHERE id = ?", (plot["id"],)).fetchone()[0], 2222)
+        with connect_database() as connection:
+            self.assertEqual(connection.execute(text("SELECT area_m2 FROM plots WHERE id = :id"), {"id": plot["id"]}).scalar_one(), 2222)
         self.assertEqual(await self.request("DELETE", path), (204, {}, None))
         for method in ("GET", "PATCH", "DELETE"):
             self.assert_problem(await self.request(method, path, {} if method == "PATCH" else None), 404, "NOT_FOUND")
@@ -175,9 +177,9 @@ class RegistryTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual((await self.request("GET", f"/v1/plots?farm_id={uuid4()}"))[2], [])
         for path in ("/v1/plots?farm_id=bad", "/v1/plots/bad", "/v1/farms/bad"):
             self.assert_problem(await self.request("GET", path), 422, "VALIDATION")
-        with connect_database(self.database) as connection:
-            connection.execute("DELETE FROM plots")
-            connection.execute("DELETE FROM farms")
+        with connect_database() as connection:
+            connection.execute(text("DELETE FROM plots"))
+            connection.execute(text("DELETE FROM farms"))
         for table in ("plots", "farms"):
             status, _, items = await self.request("GET", f"/v1/{table}")
             self.assertEqual((status, items), (200, []))
@@ -187,6 +189,8 @@ class RegistryTests(unittest.IsolatedAsyncioTestCase):
 
     async def test_unavailable_database(self):
         self.database = self.database.parent / "missing.db"
+        self.engine.dispose()
+        self.engine = create_registry_engine(f"sqlite:///{self.database}")
         for path in ("/v1/farms", "/v1/plots", "/v1/crops", "/v1/soils", "/v1/emitters"):
             response = await self.request("GET", path)
             self.assert_problem(response, 503, "UNAVAILABLE")
@@ -195,23 +199,39 @@ class RegistryTests(unittest.IsolatedAsyncioTestCase):
         self.assertFalse(self.database.exists())
 
     async def test_corrupt_database(self):
+        self.engine.dispose()
         self.database.write_bytes(b"This is not a SQLite database.")
         for path in ("/v1/farms", "/v1/plots", "/v1/crops"):
             response = await self.request("GET", path)
             self.assert_problem(response, 503, "UNAVAILABLE")
             self.assertEqual(response[1][b"retry-after"], b"5")
 
+    async def test_sqlite_replacement_is_visible_to_next_request(self):
+        if self.engine.dialect.name != "sqlite":
+            self.skipTest("SQLite file replacement is specific to SQLite")
+        farm_id = self.sample["farm_id"]
+        path = f"/v1/farms/{farm_id}"
+        self.assertEqual((await self.request("GET", path))[0], 200)
+        replacement = self.database.with_name("replacement.db")
+        shutil.copyfile(self.database, replacement)
+        with closing(sqlite3.connect(replacement)) as connection, connection:
+            connection.execute("UPDATE farms SET name = ? WHERE id = ?", ("Restored", farm_id))
+        replacement.replace(self.database)
+        self.assertEqual((await self.request("GET", path))[2]["name"], "Restored")
+
     async def test_connection_rollback_close_and_foreign_keys(self):
         with self.assertRaises(RuntimeError):
-            with connect_database(self.database) as connection:
-                self.assertEqual(connection.execute("PRAGMA foreign_keys").fetchone()[0], 1)
-                connection.execute("INSERT INTO farms VALUES (?, ?)", (str(uuid4()), "Rollback"))
+            with connect_database() as connection:
+                if connection.dialect.name == "sqlite":
+                    self.assertEqual(connection.execute(text("PRAGMA foreign_keys")).scalar_one(), 1)
+                connection.execute(text("INSERT INTO farms VALUES (:id, :name)"), {"id": str(uuid4()), "name": "Rollback"})
                 raise RuntimeError("abort transaction")
-        with self.assertRaises(sqlite3.ProgrammingError):
-            connection.execute("SELECT 1")
-        with connect_database(self.database) as connection:
-            self.assertEqual(connection.execute("SELECT COUNT(*) FROM farms").fetchone()[0], 2)
-            self.assertEqual(connection.execute("PRAGMA foreign_key_check").fetchall(), [])
+        with self.assertRaises(ResourceClosedError):
+            connection.execute(text("SELECT 1"))
+        with connect_database() as connection:
+            self.assertEqual(connection.execute(text("SELECT COUNT(*) FROM farms")).fetchone()[0], 2)
+            if connection.dialect.name == "sqlite":
+                self.assertEqual(connection.execute(text("PRAGMA foreign_key_check")).fetchall(), [])
 
 
 if __name__ == "__main__":

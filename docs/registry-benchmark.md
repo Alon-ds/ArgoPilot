@@ -24,3 +24,20 @@ Limitations: local machine, small seeded dataset, mixed workload at 10 total req
 Raw measurements and environment: [registry-benchmark.json](registry-benchmark.json).
 
 Reproduce from `services/registry-service`: start `uv run uvicorn main:app --host 127.0.0.1 --port 8001 --no-access-log`, then run `uv run python benchmark.py --output ../../docs/registry-benchmark.json` in another terminal.
+# P2 PostgreSQL benchmark
+
+On November 15, 2026, a local run on macOS arm64 used Python 3.12.11,
+PostgreSQL 15.15, and the 15 course seed rows. The client sent 600 HTTP
+requests over 60 seconds, rotating across the ten list and item endpoints
+at 10 requests per second total. There were zero errors. The worst per-route
+p95 was 29.967 ms, or 37.478 ms including client scheduling delay. All ten
+routes met the 100 ms target in this run.
+
+With Uvicorn connected to the seeded PostgreSQL database, run from the service directory:
+
+```bash
+uv run python benchmark.py --database postgresql --base-url http://127.0.0.1:58001 --duration 60 --rate 10 --summary-only --output ../../docs/registry-postgresql-benchmark.json
+```
+
+See [the PostgreSQL measurement report](registry-postgresql-benchmark.json)
+for the per-route results.

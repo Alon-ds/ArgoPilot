@@ -1,11 +1,24 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 
 from catalogs import router as catalogs_router
+from database import get_engine
 from errors import register_error_handlers
 from farms import router as farms_router
 from plots import router as plots_router
 
-app = FastAPI(title="AgroPilot registry-service", version="0.1.0")
+
+@asynccontextmanager
+async def lifespan(_app: FastAPI):
+    engine = get_engine()
+    try:
+        yield
+    finally:
+        engine.dispose()
+
+
+app = FastAPI(title="AgroPilot registry-service", version="0.1.0", lifespan=lifespan)
 register_error_handlers(app)
 app.include_router(catalogs_router)
 app.include_router(farms_router)

@@ -17,6 +17,8 @@ def main() -> None:
     parser.add_argument("--duration", type=int, default=60)
     parser.add_argument("--rate", type=int, default=10)
     parser.add_argument("--output", type=Path, default=Path("benchmark-results.json"))
+    parser.add_argument("--database", choices=("sqlite", "postgresql"), help="Backend under test")
+    parser.add_argument("--summary-only", action="store_true", help="Omit individual request samples")
     args = parser.parse_args()
     if args.duration <= 0 or args.rate <= 0:
         parser.error("duration and rate must be positive")
@@ -93,8 +95,12 @@ def main() -> None:
         "elapsed_seconds": round(elapsed, 3), "total_requests": len(samples),
         "workload": "Round-robin over 10 read endpoints; 10 total requests/second, 1 per endpoint/second at defaults.",
         "percentile_method": "nearest rank; scheduled latency includes client scheduling delay",
-        "passed": passed, "endpoints": results, "samples": samples,
+        "passed": passed, "endpoints": results,
     }
+    if args.database:
+        report["database"] = args.database
+    if not args.summary_only:
+        report["samples"] = samples
     args.output.write_text(json.dumps(report, indent=2) + "\n")
     print(f"Passed: {passed}. Results: {args.output}")
     if not passed:

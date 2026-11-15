@@ -41,6 +41,32 @@ The VS Code configuration in the repository root (`.vscode/launch.json`) can als
 Restart a running server after code changes, or use Uvicorn's `--reload` option
 for development. Interactive API documentation: <http://127.0.0.1:8000/docs>.
 
+## PostgreSQL
+
+The Registry uses SQLAlchemy Core on both backends. When `DATABASE_URL` is absent,
+it opens the existing local `registry.db`. Set `DATABASE_URL` in the service's
+`.env` or in the process environment to select PostgreSQL. Process variables
+take precedence. See `.env.example` for URL formats.
+
+Create an empty PostgreSQL database and grant the database user permission to
+create tables. From this directory, with `DATABASE_URL` set for that database, run:
+
+```bash
+uv run python -m bootstrap
+```
+
+The command creates the Registry tables and inserts the 15 course seed rows used by
+`seed_registry.sh`. It rejects a database containing Registry rows. Use a dedicated
+database for this exercise. Start Uvicorn with the same configuration.
+
+Run the PostgreSQL integration tests with a separate test database whose user
+can create schemas. The suite creates and removes its own temporary schemas.
+Set `POSTGRES_TEST_DATABASE_URL` in the process environment and run:
+
+```bash
+uv run python -W error::ResourceWarning -m unittest discover -s tests -p 'test_postgres.py' -v
+```
+
 ## API
 
 | Resource | List | Item | Create | Partial update | Delete |
@@ -99,7 +125,7 @@ Errors use `application/problem+json` with `type`, `title`, `status`, `detail`,
 | 422 | `VALIDATION` | Invalid input, malformed UUID, or nonexistent reference in a plot body |
 | 404 | `NOT_FOUND` | Requested item or route does not exist |
 | 409 | `CONFLICT` | Duplicate plot name in a farm, or deletion of a farm with plots |
-| 503 | `UNAVAILABLE` | SQLite failure, including missing or corrupt database; includes `Retry-After: 5` |
+| 503 | `UNAVAILABLE` | Database unavailable, including a missing or corrupt SQLite file, with `Retry-After: 5` |
 | 405 | `METHOD_NOT_ALLOWED` | Unsupported method, including catalog writes; includes `Allow` |
 
 `METHOD_NOT_ALLOWED` is the implementation choice for 405 because the task

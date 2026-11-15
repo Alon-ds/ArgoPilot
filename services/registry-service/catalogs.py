@@ -3,9 +3,11 @@
 from typing import Literal
 
 from fastapi import APIRouter, HTTPException
+from sqlalchemy import select
 
 from database import connect_database
 from schemas import Crop, Emitter, Soil
+from tables import metadata
 
 
 router = APIRouter(prefix="/v1")
@@ -13,15 +15,15 @@ Catalog = Literal["crops", "soils", "emitters"]
 
 
 def list_catalog(table: Catalog) -> list[dict]:
+    catalog = metadata.tables[table]
     with connect_database() as connection:
-        return [dict(row) for row in connection.execute(f"SELECT * FROM {table} ORDER BY id")]
+        return [dict(row) for row in connection.execute(select(catalog).order_by(catalog.c.id)).mappings()]
 
 
 def get_catalog_item(table: Catalog, item_id: str) -> dict:
+    catalog = metadata.tables[table]
     with connect_database() as connection:
-        row = connection.execute(
-            f"SELECT * FROM {table} WHERE id = ?", (item_id,)
-        ).fetchone()
+        row = connection.execute(select(catalog).where(catalog.c.id == item_id)).mappings().one_or_none()
     if row is None:
         raise HTTPException(status_code=404, detail=f"Item not found in {table}.")
     return dict(row)

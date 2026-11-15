@@ -1,11 +1,11 @@
 """Consistent problem responses for API and database failures."""
 
-import sqlite3
 from http import HTTPStatus
 
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
+from sqlalchemy.exc import DBAPIError, IntegrityError, TimeoutError
 from starlette.exceptions import HTTPException
 
 
@@ -57,8 +57,17 @@ def register_error_handlers(app: FastAPI) -> None:
         )
         return problem_response(request, 422, detail)
 
-    @app.exception_handler(sqlite3.DatabaseError)
+    @app.exception_handler(TimeoutError)
+    @app.exception_handler(DBAPIError)
     async def handle_database_error(
-        request: Request, error: sqlite3.DatabaseError
+        request: Request, error: DBAPIError | TimeoutError
     ) -> JSONResponse:
+        if isinstance(error, IntegrityError):
+            constraint = getattr(getattr(error.orig, "diag", None), "constraint_name", None)
+            if constraint == "uq_plots_farm_id_name":
+                return problem_response(request, 409, "A plot with this name already exists in the farm.")
+            if constraint == "fk_plots_farm_id" and request.method == "DELETE":
+                return problem_response(request, 409, "Cannot delete a farm with plots.")
+            if constraint in {"fk_plots_farm_id", "fk_plots_crop_id", "fk_plots_soil_id", "fk_plots_emitter_id"}:
+                return problem_response(request, 422, f"{constraint.removeprefix('fk_plots_')} does not exist.")
         return problem_response(request, 503, "The registry database is unavailable.")

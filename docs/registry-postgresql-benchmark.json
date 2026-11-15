@@ -1,0 +1,96 @@
+{
+  "started_at_utc": "2026-11-15T17:00:37.366979+00:00",
+  "platform": "macOS-15.6.1-arm64-arm-64bit",
+  "python": "3.12.11",
+  "base_url": "http://127.0.0.1:58001",
+  "duration_seconds": 60,
+  "target_total_rps": 10,
+  "elapsed_seconds": 59.91,
+  "total_requests": 600,
+  "workload": "Round-robin over 10 read endpoints; 10 total requests/second, 1 per endpoint/second at defaults.",
+  "percentile_method": "nearest rank; scheduled latency includes client scheduling delay",
+  "passed": true,
+  "endpoints": [
+    {
+      "path": "/v1/farms",
+      "requests": 60,
+      "errors": 0,
+      "p95_ms": 6.38,
+      "scheduled_p95_ms": 11.388,
+      "max_ms": 9.298
+    },
+    {
+      "path": "/v1/farms/a9c1e4b2-6f70-4d8e-a144-3f8b5c904004",
+      "requests": 60,
+      "errors": 0,
+      "p95_ms": 29.967,
+      "scheduled_p95_ms": 37.478,
+      "max_ms": 60.2
+    },
+    {
+      "path": "/v1/plots",
+      "requests": 60,
+      "errors": 0,
+      "p95_ms": 6.454,
+      "scheduled_p95_ms": 11.597,
+      "max_ms": 7.497
+    },
+    {
+      "path": "/v1/plots/c8f3d1b0-4d2e-5a1b-8b22-1d6e3f702002",
+      "requests": 60,
+      "errors": 0,
+      "p95_ms": 6.948,
+      "scheduled_p95_ms": 12.098,
+      "max_ms": 22.382
+    },
+    {
+      "path": "/v1/crops",
+      "requests": 60,
+      "errors": 0,
+      "p95_ms": 7.08,
+      "scheduled_p95_ms": 13.64,
+      "max_ms": 29.566
+    },
+    {
+      "path": "/v1/crops/bell-pepper",
+      "requests": 60,
+      "errors": 0,
+      "p95_ms": 6.881,
+      "scheduled_p95_ms": 12.041,
+      "max_ms": 18.834
+    },
+    {
+      "path": "/v1/soils",
+      "requests": 60,
+      "errors": 0,
+      "p95_ms": 6.188,
+      "scheduled_p95_ms": 10.746,
+      "max_ms": 6.932
+    },
+    {
+      "path": "/v1/soils/clay-loam",
+      "requests": 60,
+      "errors": 0,
+      "p95_ms": 6.258,
+      "scheduled_p95_ms": 11.408,
+      "max_ms": 15.898
+    },
+    {
+      "path": "/v1/emitters",
+      "requests": 60,
+      "errors": 0,
+      "p95_ms": 6.562,
+      "scheduled_p95_ms": 11.738,
+      "max_ms": 6.814
+    },
+    {
+      "path": "/v1/emitters/dripnet-pc-0.6",
+      "requests": 60,
+      "errors": 0,
+      "p95_ms": 6.787,
+      "scheduled_p95_ms": 12.004,
+      "max_ms": 9.778
+    }
+  ],
+  "database": "postgresql"
+}
