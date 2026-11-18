@@ -40,5 +40,13 @@ jobs:
       - name: Install locked dependencies
         run: uv sync --locked --python "${{ matrix.python-version }}"
 
-      - name: Run tests with pytest
-        run: uv run --no-sync python -m pytest -q
+      - name: Run tests with coverage
+        run: uv run --no-sync python -m pytest --cov --cov-report=term --cov-report=html
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: coverage-report-${{ matrix.python-version }}
+          path: services/registry-service/htmlcov/
+          
