@@ -1,6 +1,7 @@
 """Consistent problem responses for API and database failures."""
 
 import sqlite3
+from sqlalchemy.exc import SQLAlchemyError
 from http import HTTPStatus
 
 from fastapi import FastAPI, Request
@@ -57,6 +58,7 @@ def register_error_handlers(app: FastAPI) -> None:
         )
         return problem_response(request, 422, detail)
 
+    @app.exception_handler(SQLAlchemyError)
     @app.exception_handler(sqlite3.DatabaseError)
     async def handle_database_error(
         request: Request, error: sqlite3.DatabaseError
