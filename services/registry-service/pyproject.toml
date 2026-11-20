@@ -5,7 +5,10 @@ description = "AgroPilot registry service."
 requires-python = ">=3.12"
 dependencies = [
     "fastapi>=0.115.0",
+    "psycopg[binary]>=3,<4",
     "pydantic>=2,<3",
+    "pydantic-settings>=2,<3",
+    "sqlalchemy>=2,<3",
     "uvicorn>=0.32.0",
 ]
 
@@ -19,7 +22,6 @@ dev = [
 ]
 
 [tool.coverage.run]
-fail_under = 100
 branch = true
 source = ["."]
 omit = [
@@ -30,4 +32,5 @@ omit = [
 ]
 
 [tool.coverage.report]
+fail_under = 100
 show_missing = true

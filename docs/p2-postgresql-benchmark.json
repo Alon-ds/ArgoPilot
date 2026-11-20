@@ -1,0 +1,1897 @@
+{
+  "started_at_utc": "2026-11-19T08:05:03.636359+00:00",
+  "platform": "macOS-15.6.1-arm64-arm-64bit",
+  "python": "3.12.11",
+  "base_url": "http://127.0.0.1:18000",
+  "duration_seconds": 30,
+  "target_total_rps": 10,
+  "elapsed_seconds": 29.908,
+  "total_requests": 300,
+  "workload": "Round-robin over 10 read endpoints; 10 total requests/second, 1 per endpoint/second at defaults.",
+  "percentile_method": "nearest rank; scheduled latency includes client scheduling delay",
+  "passed": true,
+  "endpoints": [
+    {
+      "path": "/v1/farms",
+      "requests": 30,
+      "errors": 0,
+      "p95_ms": 23.332,
+      "scheduled_p95_ms": 52.266,
+      "max_ms": 50.183
+    },
+    {
+      "path": "/v1/farms/a9c1e4b2-6f70-4d8e-a144-3f8b5c904004",
+      "requests": 30,
+      "errors": 0,
+      "p95_ms": 6.483,
+      "scheduled_p95_ms": 10.888,
+      "max_ms": 11.3
+    },
+    {
+      "path": "/v1/plots",
+      "requests": 30,
+      "errors": 0,
+      "p95_ms": 13.203,
+      "scheduled_p95_ms": 18.721,
+      "max_ms": 140.586
+    },
+    {
+      "path": "/v1/plots/c8f3d1b0-4d2e-5a1b-8b22-1d6e3f702002",
+      "requests": 30,
+      "errors": 0,
+      "p95_ms": 10.422,
+      "scheduled_p95_ms": 11.048,
+      "max_ms": 110.683
+    },
+    {
+      "path": "/v1/crops",
+      "requests": 30,
+      "errors": 0,
+      "p95_ms": 7.038,
+      "scheduled_p95_ms": 10.557,
+      "max_ms": 35.492
+    },
+    {
+      "path": "/v1/crops/bell-pepper",
+      "requests": 30,
+      "errors": 0,
+      "p95_ms": 6.193,
+      "scheduled_p95_ms": 11.126,
+      "max_ms": 7.674
+    },
+    {
+      "path": "/v1/soils",
+      "requests": 30,
+      "errors": 0,
+      "p95_ms": 7.576,
+      "scheduled_p95_ms": 12.636,
+      "max_ms": 11.033
+    },
+    {
+      "path": "/v1/soils/clay-loam",
+      "requests": 30,
+      "errors": 0,
+      "p95_ms": 5.804,
+      "scheduled_p95_ms": 10.985,
+      "max_ms": 6.162
+    },
+    {
+      "path": "/v1/emitters",
+      "requests": 30,
+      "errors": 0,
+      "p95_ms": 6.654,
+      "scheduled_p95_ms": 11.831,
+      "max_ms": 8.691
+    },
+    {
+      "path": "/v1/emitters/dripnet-pc-0.6",
+      "requests": 30,
+      "errors": 0,
+      "p95_ms": 22.879,
+      "scheduled_p95_ms": 23.737,
+      "max_ms": 138.25
+    }
+  ],
+  "samples": [
+    {
+      "path": "/v1/farms",
+      "latency_ms": 1.5379999967990443,
+      "scheduled_latency_ms": 1.7303329950664192,
+      "error": null
+    },
+    {
+      "path": "/v1/farms/a9c1e4b2-6f70-4d8e-a144-3f8b5c904004",
+      "latency_ms": 2.7960410006926395,
+      "scheduled_latency_ms": 7.907833001809195,
+      "error": null
+    },
+    {
+      "path": "/v1/plots",
+      "latency_ms": 7.209791001514532,
+      "scheduled_latency_ms": 12.412832998961676,
+      "error": null
+    },
+    {
+      "path": "/v1/plots/c8f3d1b0-4d2e-5a1b-8b22-1d6e3f702002",
+      "latency_ms": 5.073542000900488,
+      "scheduled_latency_ms": 10.285999996995088,
+      "error": null
+    },
+    {
+      "path": "/v1/crops",
+      "latency_ms": 3.8408339969464578,
+      "scheduled_latency_ms": 8.995291995233856,
+      "error": null
+    },
+    {
+      "path": "/v1/crops/bell-pepper",
+      "latency_ms": 2.516458000172861,
+      "scheduled_latency_ms": 7.628082996234298,
+      "error": null
+    },
+    {
+      "path": "/v1/soils",
+      "latency_ms": 5.189041003177408,
+      "scheduled_latency_ms": 10.335582999687176,
+      "error": null
+    },
+    {
+      "path": "/v1/soils/clay-loam",
+      "latency_ms": 5.1984169986099005,
+      "scheduled_latency_ms": 6.019499996909872,
+      "error": null
+    },
+    {
+      "path": "/v1/emitters",
+      "latency_ms": 2.493958003469743,
+      "scheduled_latency_ms": 7.411832993966527,
+      "error": null
+    },
+    {
+      "path": "/v1/emitters/dripnet-pc-0.6",
+      "latency_ms": 2.7992499963147566,
+      "scheduled_latency_ms": 3.370124992216006,
+      "error": null
+    },
+    {
+      "path": "/v1/farms",
+      "latency_ms": 5.184082998312078,
+      "scheduled_latency_ms": 10.354832993471064,
+      "error": null
+    },
+    {
+      "path": "/v1/farms/a9c1e4b2-6f70-4d8e-a144-3f8b5c904004",
+      "latency_ms": 5.869917004019953,
+      "scheduled_latency_ms": 6.841624999651685,
+      "error": null
+    },
+    {
+      "path": "/v1/plots",
+      "latency_ms": 6.160625001939479,
+      "scheduled_latency_ms": 10.53433299966855,
+      "error": null
+    },
+    {
+      "path": "/v1/plots/c8f3d1b0-4d2e-5a1b-8b22-1d6e3f702002",
+      "latency_ms": 4.541459005849902,
+      "scheduled_latency_ms": 8.484291996865068,
+      "error": null
+    },
+    {
+      "path": "/v1/crops",
+      "latency_ms": 5.224332999205217,
+      "scheduled_latency_ms": 10.55712499510264,
+      "error": null
+    },
+    {
+      "path": "/v1/crops/bell-pepper",
+      "latency_ms": 5.956749999313615,
+      "scheduled_latency_ms": 11.126249999506399,
+      "error": null
+    },
+    {
+      "path": "/v1/soils",
+      "latency_ms": 6.073833006666973,
+      "scheduled_latency_ms": 11.307125001621898,
+      "error": null
+    },
+    {
+      "path": "/v1/soils/clay-loam",
+      "latency_ms": 5.803583000670187,
+      "scheduled_latency_ms": 10.984624997945502,
+      "error": null
+    },
+    {
+      "path": "/v1/emitters",
+      "latency_ms": 6.181207994814031,
+      "scheduled_latency_ms": 10.518499992031138,
+      "error": null
+    },
+    {
+      "path": "/v1/emitters/dripnet-pc-0.6",
+      "latency_ms": 5.024000005505513,
+      "scheduled_latency_ms": 6.626916998357046,
+      "error": null
+    },
+    {
+      "path": "/v1/farms",
+      "latency_ms": 6.19712499610614,
+      "scheduled_latency_ms": 11.370832995453384,
+      "error": null
+    },
+    {
+      "path": "/v1/farms/a9c1e4b2-6f70-4d8e-a144-3f8b5c904004",
+      "latency_ms": 6.4829590046429075,
+      "scheduled_latency_ms": 7.557917000667658,
+      "error": null
+    },
+    {
+      "path": "/v1/plots",
+      "latency_ms": 6.3563750009052455,
+      "scheduled_latency_ms": 7.9289580025943,
+      "error": null
+    },
+    {
+      "path": "/v1/plots/c8f3d1b0-4d2e-5a1b-8b22-1d6e3f702002",
+      "latency_ms": 5.2608749974751845,
+      "scheduled_latency_ms": 6.049207993783057,
+      "error": null
+    },
+    {
+      "path": "/v1/crops",
+      "latency_ms": 5.318041999998968,
+      "scheduled_latency_ms": 9.033124995767139,
+      "error": null
+    },
+    {
+      "path": "/v1/crops/bell-pepper",
+      "latency_ms": 5.700374997104518,
+      "scheduled_latency_ms": 6.084082997404039,
+      "error": null
+    },
+    {
+      "path": "/v1/soils",
+      "latency_ms": 4.700000004959293,
+      "scheduled_latency_ms": 9.853499999735504,
+      "error": null
+    },
+    {
+      "path": "/v1/soils/clay-loam",
+      "latency_ms": 5.574292001256254,
+      "scheduled_latency_ms": 6.867875003081281,
+      "error": null
+    },
+    {
+      "path": "/v1/emitters",
+      "latency_ms": 3.8908339993213303,
+      "scheduled_latency_ms": 8.901541994418949,
+      "error": null
+    },
+    {
+      "path": "/v1/emitters/dripnet-pc-0.6",
+      "latency_ms": 10.82808300270699,
+      "scheduled_latency_ms": 12.345832998107653,
+      "error": null
+    },
+    {
+      "path": "/v1/farms",
+      "latency_ms": 4.89825000113342,
+      "scheduled_latency_ms": 10.02291699842317,
+      "error": null
+    },
+    {
+      "path": "/v1/farms/a9c1e4b2-6f70-4d8e-a144-3f8b5c904004",
+      "latency_ms": 3.967666001699399,
+      "scheduled_latency_ms": 5.897957998968195,
+      "error": null
+    },
+    {
+      "path": "/v1/plots",
+      "latency_ms": 4.619374994945247,
+      "scheduled_latency_ms": 9.713332998217084,
+      "error": null
+    },
+    {
+      "path": "/v1/plots/c8f3d1b0-4d2e-5a1b-8b22-1d6e3f702002",
+      "latency_ms": 5.464874993776903,
+      "scheduled_latency_ms": 10.637749990564771,
+      "error": null
+    },
+    {
+      "path": "/v1/crops",
+      "latency_ms": 3.560334000212606,
+      "scheduled_latency_ms": 7.535416996688582,
+      "error": null
+    },
+    {
+      "path": "/v1/crops/bell-pepper",
+      "latency_ms": 5.573416994593572,
+      "scheduled_latency_ms": 5.937874993833248,
+      "error": null
+    },
+    {
+      "path": "/v1/soils",
+      "latency_ms": 7.5755409998237155,
+      "scheduled_latency_ms": 12.636332998226862,
+      "error": null
+    },
+    {
+      "path": "/v1/soils/clay-loam",
+      "latency_ms": 5.220958002610132,
+      "scheduled_latency_ms": 10.31883300311165,
+      "error": null
+    },
+    {
+      "path": "/v1/emitters",
+      "latency_ms": 5.6937920016935095,
+      "scheduled_latency_ms": 10.88116699247621,
+      "error": null
+    },
+    {
+      "path": "/v1/emitters/dripnet-pc-0.6",
+      "latency_ms": 4.361375002190471,
+      "scheduled_latency_ms": 9.43041699792957,
+      "error": null
+    },
+    {
+      "path": "/v1/farms",
+      "latency_ms": 3.768999995372724,
+      "scheduled_latency_ms": 8.814582994091325,
+      "error": null
+    },
+    {
+      "path": "/v1/farms/a9c1e4b2-6f70-4d8e-a144-3f8b5c904004",
+      "latency_ms": 5.981290996714961,
+      "scheduled_latency_ms": 10.785207996377721,
+      "error": null
+    },
+    {
+      "path": "/v1/plots",
+      "latency_ms": 2.501375005522277,
+      "scheduled_latency_ms": 7.543917003204115,
+      "error": null
+    },
+    {
+      "path": "/v1/plots/c8f3d1b0-4d2e-5a1b-8b22-1d6e3f702002",
+      "latency_ms": 3.53345899929991,
+      "scheduled_latency_ms": 8.677666992298327,
+      "error": null
+    },
+    {
+      "path": "/v1/crops",
+      "latency_ms": 2.175082998292055,
+      "scheduled_latency_ms": 5.368082995119039,
+      "error": null
+    },
+    {
+      "path": "/v1/crops/bell-pepper",
+      "latency_ms": 2.6554580035735853,
+      "scheduled_latency_ms": 7.74295799783431,
+      "error": null
+    },
+    {
+      "path": "/v1/soils",
+      "latency_ms": 3.772834003029857,
+      "scheduled_latency_ms": 8.842292001645546,
+      "error": null
+    },
+    {
+      "path": "/v1/soils/clay-loam",
+      "latency_ms": 2.5435420029680245,
+      "scheduled_latency_ms": 7.60979200276779,
+      "error": null
+    },
+    {
+      "path": "/v1/emitters",
+      "latency_ms": 2.904583998315502,
+      "scheduled_latency_ms": 7.9776669954298995,
+      "error": null
+    },
+    {
+      "path": "/v1/emitters/dripnet-pc-0.6",
+      "latency_ms": 2.9162079954403453,
+      "scheduled_latency_ms": 7.978332992934156,
+      "error": null
+    },
+    {
+      "path": "/v1/farms",
+      "latency_ms": 2.905875000578817,
+      "scheduled_latency_ms": 3.7784169981023297,
+      "error": null
+    },
+    {
+      "path": "/v1/farms/a9c1e4b2-6f70-4d8e-a144-3f8b5c904004",
+      "latency_ms": 2.3239579968503676,
+      "scheduled_latency_ms": 4.527582997980062,
+      "error": null
+    },
+    {
+      "path": "/v1/plots",
+      "latency_ms": 2.787916993838735,
+      "scheduled_latency_ms": 7.867499996791594,
+      "error": null
+    },
+    {
+      "path": "/v1/plots/c8f3d1b0-4d2e-5a1b-8b22-1d6e3f702002",
+      "latency_ms": 10.421541002870072,
+      "scheduled_latency_ms": 10.843457996088546,
+      "error": null
+    },
+    {
+      "path": "/v1/crops",
+      "latency_ms": 4.3835420001414604,
+      "scheduled_latency_ms": 9.644999998272397,
+      "error": null
+    },
+    {
+      "path": "/v1/crops/bell-pepper",
+      "latency_ms": 7.673791995330248,
+      "scheduled_latency_ms": 9.837041994614992,
+      "error": null
+    },
+    {
+      "path": "/v1/soils",
+      "latency_ms": 2.941457998531405,
+      "scheduled_latency_ms": 4.414499999256805,
+      "error": null
+    },
+    {
+      "path": "/v1/soils/clay-loam",
+      "latency_ms": 4.938833000778686,
+      "scheduled_latency_ms": 7.804458000464365,
+      "error": null
+    },
+    {
+      "path": "/v1/emitters",
+      "latency_ms": 2.2731249991920777,
+      "scheduled_latency_ms": 3.0622499907622114,
+      "error": null
+    },
+    {
+      "path": "/v1/emitters/dripnet-pc-0.6",
+      "latency_ms": 3.410332996281795,
+      "scheduled_latency_ms": 8.476499991957098,
+      "error": null
+    },
+    {
+      "path": "/v1/farms",
+      "latency_ms": 3.4698329982347786,
+      "scheduled_latency_ms": 8.54987499769777,
+      "error": null
+    },
+    {
+      "path": "/v1/farms/a9c1e4b2-6f70-4d8e-a144-3f8b5c904004",
+      "latency_ms": 2.563458001532126,
+      "scheduled_latency_ms": 5.525583001144696,
+      "error": null
+    },
+    {
+      "path": "/v1/plots",
+      "latency_ms": 5.021458004193846,
+      "scheduled_latency_ms": 10.120958002517,
+      "error": null
+    },
+    {
+      "path": "/v1/plots/c8f3d1b0-4d2e-5a1b-8b22-1d6e3f702002",
+      "latency_ms": 3.4451250030542724,
+      "scheduled_latency_ms": 6.657291996816639,
+      "error": null
+    },
+    {
+      "path": "/v1/crops",
+      "latency_ms": 4.786499994224869,
+      "scheduled_latency_ms": 9.329457992862444,
+      "error": null
+    },
+    {
+      "path": "/v1/crops/bell-pepper",
+      "latency_ms": 2.456457994412631,
+      "scheduled_latency_ms": 4.956624994520098,
+      "error": null
+    },
+    {
+      "path": "/v1/soils",
+      "latency_ms": 7.430541001667734,
+      "scheduled_latency_ms": 10.208332998445258,
+      "error": null
+    },
+    {
+      "path": "/v1/soils/clay-loam",
+      "latency_ms": 3.319625000585802,
+      "scheduled_latency_ms": 5.033499997807667,
+      "error": null
+    },
+    {
+      "path": "/v1/emitters",
+      "latency_ms": 2.474583998264279,
+      "scheduled_latency_ms": 4.441916993528139,
+      "error": null
+    },
+    {
+      "path": "/v1/emitters/dripnet-pc-0.6",
+      "latency_ms": 4.575582999677863,
+      "scheduled_latency_ms": 9.663999997428618,
+      "error": null
+    },
+    {
+      "path": "/v1/farms",
+      "latency_ms": 6.1475839975173585,
+      "scheduled_latency_ms": 11.250166993704624,
+      "error": null
+    },
+    {
+      "path": "/v1/farms/a9c1e4b2-6f70-4d8e-a144-3f8b5c904004",
+      "latency_ms": 11.299958001472987,
+      "scheduled_latency_ms": 15.317083001718856,
+      "error": null
+    },
+    {
+      "path": "/v1/plots",
+      "latency_ms": 140.58612500230083,
+      "scheduled_latency_ms": 182.1337500005029,
+      "error": null
+    },
+    {
+      "path": "/v1/plots/c8f3d1b0-4d2e-5a1b-8b22-1d6e3f702002",
+      "latency_ms": 110.68325000087498,
+      "scheduled_latency_ms": 137.54670799244195,
+      "error": null
+    },
+    {
+      "path": "/v1/crops",
+      "latency_ms": 35.49212500365684,
+      "scheduled_latency_ms": 53.206249998766,
+      "error": null
+    },
+    {
+      "path": "/v1/crops/bell-pepper",
+      "latency_ms": 5.683625000528991,
+      "scheduled_latency_ms": 5.980666996038053,
+      "error": null
+    },
+    {
+      "path": "/v1/soils",
+      "latency_ms": 11.033250004402362,
+      "scheduled_latency_ms": 15.00629200018011,
+      "error": null
+    },
+    {
+      "path": "/v1/soils/clay-loam",
+      "latency_ms": 2.9298750014277175,
+      "scheduled_latency_ms": 5.6430830009048805,
+      "error": null
+    },
+    {
+      "path": "/v1/emitters",
+      "latency_ms": 2.8667920050793327,
+      "scheduled_latency_ms": 6.894166996062268,
+      "error": null
+    },
+    {
+      "path": "/v1/emitters/dripnet-pc-0.6",
+      "latency_ms": 6.666542001767084,
+      "scheduled_latency_ms": 11.932999994314741,
+      "error": null
+    },
+    {
+      "path": "/v1/farms",
+      "latency_ms": 3.806125001574401,
+      "scheduled_latency_ms": 5.069499995443039,
+      "error": null
+    },
+    {
+      "path": "/v1/farms/a9c1e4b2-6f70-4d8e-a144-3f8b5c904004",
+      "latency_ms": 3.2657920019119047,
+      "scheduled_latency_ms": 8.353666999028064,
+      "error": null
+    },
+    {
+      "path": "/v1/plots",
+      "latency_ms": 4.249750003509689,
+      "scheduled_latency_ms": 9.330000000772998,
+      "error": null
+    },
+    {
+      "path": "/v1/plots/c8f3d1b0-4d2e-5a1b-8b22-1d6e3f702002",
+      "latency_ms": 3.4378330019535497,
+      "scheduled_latency_ms": 8.538457994291093,
+      "error": null
+    },
+    {
+      "path": "/v1/crops",
+      "latency_ms": 2.680709003470838,
+      "scheduled_latency_ms": 6.245416996534914,
+      "error": null
+    },
+    {
+      "path": "/v1/crops/bell-pepper",
+      "latency_ms": 3.5508329965523444,
+      "scheduled_latency_ms": 5.513999996765051,
+      "error": null
+    },
+    {
+      "path": "/v1/soils",
+      "latency_ms": 5.404499999713153,
+      "scheduled_latency_ms": 5.564874998526648,
+      "error": null
+    },
+    {
+      "path": "/v1/soils/clay-loam",
+      "latency_ms": 2.6496669961488806,
+      "scheduled_latency_ms": 4.5663749988307245,
+      "error": null
+    },
+    {
+      "path": "/v1/emitters",
+      "latency_ms": 4.731291999632958,
+      "scheduled_latency_ms": 9.82416699116584,
+      "error": null
+    },
+    {
+      "path": "/v1/emitters/dripnet-pc-0.6",
+      "latency_ms": 2.394666997133754,
+      "scheduled_latency_ms": 5.695666994142812,
+      "error": null
+    },
+    {
+      "path": "/v1/farms",
+      "latency_ms": 3.522125000017695,
+      "scheduled_latency_ms": 20.57833299477352,
+      "error": null
+    },
+    {
+      "path": "/v1/farms/a9c1e4b2-6f70-4d8e-a144-3f8b5c904004",
+      "latency_ms": 2.836250001564622,
+      "scheduled_latency_ms": 7.908166997367516,
+      "error": null
+    },
+    {
+      "path": "/v1/plots",
+      "latency_ms": 2.64995799807366,
+      "scheduled_latency_ms": 7.757332998153288,
+      "error": null
+    },
+    {
+      "path": "/v1/plots/c8f3d1b0-4d2e-5a1b-8b22-1d6e3f702002",
+      "latency_ms": 2.4609160027466714,
+      "scheduled_latency_ms": 7.551457994850352,
+      "error": null
+    },
+    {
+      "path": "/v1/crops",
+      "latency_ms": 2.218125002400484,
+      "scheduled_latency_ms": 7.294791997992434,
+      "error": null
+    },
+    {
+      "path": "/v1/crops/bell-pepper",
+      "latency_ms": 3.23970899626147,
+      "scheduled_latency_ms": 8.328291994985193,
+      "error": null
+    },
+    {
+      "path": "/v1/soils",
+      "latency_ms": 4.039500003273133,
+      "scheduled_latency_ms": 9.128707999479957,
+      "error": null
+    },
+    {
+      "path": "/v1/soils/clay-loam",
+      "latency_ms": 2.851917000953108,
+      "scheduled_latency_ms": 8.011917001567781,
+      "error": null
+    },
+    {
+      "path": "/v1/emitters",
+      "latency_ms": 2.0846249972237274,
+      "scheduled_latency_ms": 6.097916993894614,
+      "error": null
+    },
+    {
+      "path": "/v1/emitters/dripnet-pc-0.6",
+      "latency_ms": 2.3483749973820522,
+      "scheduled_latency_ms": 6.409291992895305,
+      "error": null
+    },
+    {
+      "path": "/v1/farms",
+      "latency_ms": 3.324541998154018,
+      "scheduled_latency_ms": 8.404541993513703,
+      "error": null
+    },
+    {
+      "path": "/v1/farms/a9c1e4b2-6f70-4d8e-a144-3f8b5c904004",
+      "latency_ms": 5.263915998511948,
+      "scheduled_latency_ms": 6.047957998816855,
+      "error": null
+    },
+    {
+      "path": "/v1/plots",
+      "latency_ms": 4.163291006989311,
+      "scheduled_latency_ms": 9.344208003312815,
+      "error": null
+    },
+    {
+      "path": "/v1/plots/c8f3d1b0-4d2e-5a1b-8b22-1d6e3f702002",
+      "latency_ms": 2.3492499967687763,
+      "scheduled_latency_ms": 2.6591249916236848,
+      "error": null
+    },
+    {
+      "path": "/v1/crops",
+      "latency_ms": 2.3016669947537594,
+      "scheduled_latency_ms": 3.969374993175734,
+      "error": null
+    },
+    {
+      "path": "/v1/crops/bell-pepper",
+      "latency_ms": 2.1893749944865704,
+      "scheduled_latency_ms": 7.266541993885767,
+      "error": null
+    },
+    {
+      "path": "/v1/soils",
+      "latency_ms": 2.2371250015567057,
+      "scheduled_latency_ms": 6.931582996912766,
+      "error": null
+    },
+    {
+      "path": "/v1/soils/clay-loam",
+      "latency_ms": 2.3758329989505,
+      "scheduled_latency_ms": 4.892375000054017,
+      "error": null
+    },
+    {
+      "path": "/v1/emitters",
+      "latency_ms": 3.3501670041005127,
+      "scheduled_latency_ms": 8.484499994665384,
+      "error": null
+    },
+    {
+      "path": "/v1/emitters/dripnet-pc-0.6",
+      "latency_ms": 2.4852909991750494,
+      "scheduled_latency_ms": 3.804832995228935,
+      "error": null
+    },
+    {
+      "path": "/v1/farms",
+      "latency_ms": 2.580332999059465,
+      "scheduled_latency_ms": 7.648374994460028,
+      "error": null
+    },
+    {
+      "path": "/v1/farms/a9c1e4b2-6f70-4d8e-a144-3f8b5c904004",
+      "latency_ms": 2.7133330004289746,
+      "scheduled_latency_ms": 7.694749998336192,
+      "error": null
+    },
+    {
+      "path": "/v1/plots",
+      "latency_ms": 2.808040997479111,
+      "scheduled_latency_ms": 7.8769579995423555,
+      "error": null
+    },
+    {
+      "path": "/v1/plots/c8f3d1b0-4d2e-5a1b-8b22-1d6e3f702002",
+      "latency_ms": 2.8040420002071187,
+      "scheduled_latency_ms": 7.887624997238163,
+      "error": null
+    },
+    {
+      "path": "/v1/crops",
+      "latency_ms": 2.41929100593552,
+      "scheduled_latency_ms": 7.501332998799626,
+      "error": null
+    },
+    {
+      "path": "/v1/crops/bell-pepper",
+      "latency_ms": 2.941709004517179,
+      "scheduled_latency_ms": 8.023916998354252,
+      "error": null
+    },
+    {
+      "path": "/v1/soils",
+      "latency_ms": 2.652458999364171,
+      "scheduled_latency_ms": 7.727291995252017,
+      "error": null
+    },
+    {
+      "path": "/v1/soils/clay-loam",
+      "latency_ms": 2.1910409996053204,
+      "scheduled_latency_ms": 7.263207997311838,
+      "error": null
+    },
+    {
+      "path": "/v1/emitters",
+      "latency_ms": 3.422291003516875,
+      "scheduled_latency_ms": 8.54520799475722,
+      "error": null
+    },
+    {
+      "path": "/v1/emitters/dripnet-pc-0.6",
+      "latency_ms": 11.716832996171433,
+      "scheduled_latency_ms": 16.898999994737096,
+      "error": null
+    },
+    {
+      "path": "/v1/farms",
+      "latency_ms": 8.20187499630265,
+      "scheduled_latency_ms": 9.634582995204255,
+      "error": null
+    },
+    {
+      "path": "/v1/farms/a9c1e4b2-6f70-4d8e-a144-3f8b5c904004",
+      "latency_ms": 2.4137919972417876,
+      "scheduled_latency_ms": 7.442374997481238,
+      "error": null
+    },
+    {
+      "path": "/v1/plots",
+      "latency_ms": 3.270665998570621,
+      "scheduled_latency_ms": 8.342458000697661,
+      "error": null
+    },
+    {
+      "path": "/v1/plots/c8f3d1b0-4d2e-5a1b-8b22-1d6e3f702002",
+      "latency_ms": 2.670458998181857,
+      "scheduled_latency_ms": 7.750541990390047,
+      "error": null
+    },
+    {
+      "path": "/v1/crops",
+      "latency_ms": 2.574040998297278,
+      "scheduled_latency_ms": 7.644707991858013,
+      "error": null
+    },
+    {
+      "path": "/v1/crops/bell-pepper",
+      "latency_ms": 2.276000006531831,
+      "scheduled_latency_ms": 7.340916999964975,
+      "error": null
+    },
+    {
+      "path": "/v1/soils",
+      "latency_ms": 2.224541996838525,
+      "scheduled_latency_ms": 7.286166997801047,
+      "error": null
+    },
+    {
+      "path": "/v1/soils/clay-loam",
+      "latency_ms": 2.2283750004135072,
+      "scheduled_latency_ms": 5.2868330021738075,
+      "error": null
+    },
+    {
+      "path": "/v1/emitters",
+      "latency_ms": 5.546332999074366,
+      "scheduled_latency_ms": 5.958957990515046,
+      "error": null
+    },
+    {
+      "path": "/v1/emitters/dripnet-pc-0.6",
+      "latency_ms": 2.9320419998839498,
+      "scheduled_latency_ms": 6.686916996841319,
+      "error": null
+    },
+    {
+      "path": "/v1/farms",
+      "latency_ms": 2.1594589998130687,
+      "scheduled_latency_ms": 7.234666998556349,
+      "error": null
+    },
+    {
+      "path": "/v1/farms/a9c1e4b2-6f70-4d8e-a144-3f8b5c904004",
+      "latency_ms": 2.260916997329332,
+      "scheduled_latency_ms": 6.313624995527789,
+      "error": null
+    },
+    {
+      "path": "/v1/plots",
+      "latency_ms": 2.3078329977579415,
+      "scheduled_latency_ms": 3.429707998293452,
+      "error": null
+    },
+    {
+      "path": "/v1/plots/c8f3d1b0-4d2e-5a1b-8b22-1d6e3f702002",
+      "latency_ms": 2.8668330051004887,
+      "scheduled_latency_ms": 4.469957995752338,
+      "error": null
+    },
+    {
+      "path": "/v1/crops",
+      "latency_ms": 3.190708994225133,
+      "scheduled_latency_ms": 4.968291992554441,
+      "error": null
+    },
+    {
+      "path": "/v1/crops/bell-pepper",
+      "latency_ms": 2.1122090038261376,
+      "scheduled_latency_ms": 6.1327919975155964,
+      "error": null
+    },
+    {
+      "path": "/v1/soils",
+      "latency_ms": 2.3651670053368434,
+      "scheduled_latency_ms": 7.432667000102811,
+      "error": null
+    },
+    {
+      "path": "/v1/soils/clay-loam",
+      "latency_ms": 2.577999999630265,
+      "scheduled_latency_ms": 7.663666998269036,
+      "error": null
+    },
+    {
+      "path": "/v1/emitters",
+      "latency_ms": 8.691250004631002,
+      "scheduled_latency_ms": 21.213624997471925,
+      "error": null
+    },
+    {
+      "path": "/v1/emitters/dripnet-pc-0.6",
+      "latency_ms": 2.9702500032726675,
+      "scheduled_latency_ms": 3.1787499974598177,
+      "error": null
+    },
+    {
+      "path": "/v1/farms",
+      "latency_ms": 2.586124996014405,
+      "scheduled_latency_ms": 7.34491699404316,
+      "error": null
+    },
+    {
+      "path": "/v1/farms/a9c1e4b2-6f70-4d8e-a144-3f8b5c904004",
+      "latency_ms": 2.4393749990849756,
+      "scheduled_latency_ms": 5.103499999677297,
+      "error": null
+    },
+    {
+      "path": "/v1/plots",
+      "latency_ms": 2.488209000148345,
+      "scheduled_latency_ms": 3.8924170003156178,
+      "error": null
+    },
+    {
+      "path": "/v1/plots/c8f3d1b0-4d2e-5a1b-8b22-1d6e3f702002",
+      "latency_ms": 2.2914580040378496,
+      "scheduled_latency_ms": 7.403707997582387,
+      "error": null
+    },
+    {
+      "path": "/v1/crops",
+      "latency_ms": 3.0072500012465753,
+      "scheduled_latency_ms": 8.116999997582752,
+      "error": null
+    },
+    {
+      "path": "/v1/crops/bell-pepper",
+      "latency_ms": 3.8201659990590997,
+      "scheduled_latency_ms": 7.78520799940452,
+      "error": null
+    },
+    {
+      "path": "/v1/soils",
+      "latency_ms": 6.700375000946224,
+      "scheduled_latency_ms": 11.908332999155391,
+      "error": null
+    },
+    {
+      "path": "/v1/soils/clay-loam",
+      "latency_ms": 4.613625002093613,
+      "scheduled_latency_ms": 9.758250002050772,
+      "error": null
+    },
+    {
+      "path": "/v1/emitters",
+      "latency_ms": 4.807459001312964,
+      "scheduled_latency_ms": 9.931791995768435,
+      "error": null
+    },
+    {
+      "path": "/v1/emitters/dripnet-pc-0.6",
+      "latency_ms": 4.143208003370091,
+      "scheduled_latency_ms": 4.865957998845261,
+      "error": null
+    },
+    {
+      "path": "/v1/farms",
+      "latency_ms": 6.576542000402696,
+      "scheduled_latency_ms": 11.715874999936204,
+      "error": null
+    },
+    {
+      "path": "/v1/farms/a9c1e4b2-6f70-4d8e-a144-3f8b5c904004",
+      "latency_ms": 4.944290994899347,
+      "scheduled_latency_ms": 6.883707996166777,
+      "error": null
+    },
+    {
+      "path": "/v1/plots",
+      "latency_ms": 13.203333997807931,
+      "scheduled_latency_ms": 18.721041997196153,
+      "error": null
+    },
+    {
+      "path": "/v1/plots/c8f3d1b0-4d2e-5a1b-8b22-1d6e3f702002",
+      "latency_ms": 3.4357080003246665,
+      "scheduled_latency_ms": 8.512457992765121,
+      "error": null
+    },
+    {
+      "path": "/v1/crops",
+      "latency_ms": 3.452958997513633,
+      "scheduled_latency_ms": 8.550041995476931,
+      "error": null
+    },
+    {
+      "path": "/v1/crops/bell-pepper",
+      "latency_ms": 2.8351669971016236,
+      "scheduled_latency_ms": 4.676416996517219,
+      "error": null
+    },
+    {
+      "path": "/v1/soils",
+      "latency_ms": 4.361250001238659,
+      "scheduled_latency_ms": 9.525542001938447,
+      "error": null
+    },
+    {
+      "path": "/v1/soils/clay-loam",
+      "latency_ms": 3.190249997715,
+      "scheduled_latency_ms": 6.259166999370791,
+      "error": null
+    },
+    {
+      "path": "/v1/emitters",
+      "latency_ms": 3.1460410027648322,
+      "scheduled_latency_ms": 8.353332996193785,
+      "error": null
+    },
+    {
+      "path": "/v1/emitters/dripnet-pc-0.6",
+      "latency_ms": 2.9030000005150214,
+      "scheduled_latency_ms": 3.568124993762467,
+      "error": null
+    },
+    {
+      "path": "/v1/farms",
+      "latency_ms": 4.241458002070431,
+      "scheduled_latency_ms": 8.14820799860172,
+      "error": null
+    },
+    {
+      "path": "/v1/farms/a9c1e4b2-6f70-4d8e-a144-3f8b5c904004",
+      "latency_ms": 3.860374999931082,
+      "scheduled_latency_ms": 5.181832995731384,
+      "error": null
+    },
+    {
+      "path": "/v1/plots",
+      "latency_ms": 5.863375001354143,
+      "scheduled_latency_ms": 6.256458000279963,
+      "error": null
+    },
+    {
+      "path": "/v1/plots/c8f3d1b0-4d2e-5a1b-8b22-1d6e3f702002",
+      "latency_ms": 3.871374996379018,
+      "scheduled_latency_ms": 9.014374991238583,
+      "error": null
+    },
+    {
+      "path": "/v1/crops",
+      "latency_ms": 4.19208400126081,
+      "scheduled_latency_ms": 9.355916998174507,
+      "error": null
+    },
+    {
+      "path": "/v1/crops/bell-pepper",
+      "latency_ms": 4.5992079976713285,
+      "scheduled_latency_ms": 9.767999996256549,
+      "error": null
+    },
+    {
+      "path": "/v1/soils",
+      "latency_ms": 4.239750000124332,
+      "scheduled_latency_ms": 8.921041997382417,
+      "error": null
+    },
+    {
+      "path": "/v1/soils/clay-loam",
+      "latency_ms": 5.630457999359351,
+      "scheduled_latency_ms": 7.214500001282431,
+      "error": null
+    },
+    {
+      "path": "/v1/emitters",
+      "latency_ms": 5.067499994765967,
+      "scheduled_latency_ms": 10.180707991821691,
+      "error": null
+    },
+    {
+      "path": "/v1/emitters/dripnet-pc-0.6",
+      "latency_ms": 5.436833998828661,
+      "scheduled_latency_ms": 7.773041994369123,
+      "error": null
+    },
+    {
+      "path": "/v1/farms",
+      "latency_ms": 3.4787920012604445,
+      "scheduled_latency_ms": 6.334166995657142,
+      "error": null
+    },
+    {
+      "path": "/v1/farms/a9c1e4b2-6f70-4d8e-a144-3f8b5c904004",
+      "latency_ms": 4.480333001993131,
+      "scheduled_latency_ms": 8.088374997896608,
+      "error": null
+    },
+    {
+      "path": "/v1/plots",
+      "latency_ms": 5.63079200219363,
+      "scheduled_latency_ms": 10.753292001027148,
+      "error": null
+    },
+    {
+      "path": "/v1/plots/c8f3d1b0-4d2e-5a1b-8b22-1d6e3f702002",
+      "latency_ms": 3.5983749985462055,
+      "scheduled_latency_ms": 6.983124992984813,
+      "error": null
+    },
+    {
+      "path": "/v1/crops",
+      "latency_ms": 4.218791000312194,
+      "scheduled_latency_ms": 9.434582992980722,
+      "error": null
+    },
+    {
+      "path": "/v1/crops/bell-pepper",
+      "latency_ms": 3.3414999998058192,
+      "scheduled_latency_ms": 5.798207996122073,
+      "error": null
+    },
+    {
+      "path": "/v1/soils",
+      "latency_ms": 4.1621249984018505,
+      "scheduled_latency_ms": 5.163707995961886,
+      "error": null
+    },
+    {
+      "path": "/v1/soils/clay-loam",
+      "latency_ms": 4.031249998661224,
+      "scheduled_latency_ms": 7.294041999557521,
+      "error": null
+    },
+    {
+      "path": "/v1/emitters",
+      "latency_ms": 6.033708996255882,
+      "scheduled_latency_ms": 9.94266699126456,
+      "error": null
+    },
+    {
+      "path": "/v1/emitters/dripnet-pc-0.6",
+      "latency_ms": 138.2502909982577,
+      "scheduled_latency_ms": 149.93058299296536,
+      "error": null
+    },
+    {
+      "path": "/v1/farms",
+      "latency_ms": 23.331542004598305,
+      "scheduled_latency_ms": 63.91974999860395,
+      "error": null
+    },
+    {
+      "path": "/v1/farms/a9c1e4b2-6f70-4d8e-a144-3f8b5c904004",
+      "latency_ms": 6.175124995934311,
+      "scheduled_latency_ms": 6.684916996164247,
+      "error": null
+    },
+    {
+      "path": "/v1/plots",
+      "latency_ms": 4.073000003700145,
+      "scheduled_latency_ms": 6.190125001012348,
+      "error": null
+    },
+    {
+      "path": "/v1/plots/c8f3d1b0-4d2e-5a1b-8b22-1d6e3f702002",
+      "latency_ms": 2.722958000958897,
+      "scheduled_latency_ms": 7.825749991752673,
+      "error": null
+    },
+    {
+      "path": "/v1/crops",
+      "latency_ms": 2.7177080046385527,
+      "scheduled_latency_ms": 7.790832998580299,
+      "error": null
+    },
+    {
+      "path": "/v1/crops/bell-pepper",
+      "latency_ms": 5.64937499439111,
+      "scheduled_latency_ms": 8.10470799478935,
+      "error": null
+    },
+    {
+      "path": "/v1/soils",
+      "latency_ms": 5.486875001224689,
+      "scheduled_latency_ms": 6.111041999247391,
+      "error": null
+    },
+    {
+      "path": "/v1/soils/clay-loam",
+      "latency_ms": 3.8713750036549754,
+      "scheduled_latency_ms": 4.321542000980116,
+      "error": null
+    },
+    {
+      "path": "/v1/emitters",
+      "latency_ms": 6.6537500024423935,
+      "scheduled_latency_ms": 11.83087499521207,
+      "error": null
+    },
+    {
+      "path": "/v1/emitters/dripnet-pc-0.6",
+      "latency_ms": 2.4614159992779605,
+      "scheduled_latency_ms": 7.555332995252684,
+      "error": null
+    },
+    {
+      "path": "/v1/farms",
+      "latency_ms": 9.104707998631056,
+      "scheduled_latency_ms": 10.668874994735233,
+      "error": null
+    },
+    {
+      "path": "/v1/farms/a9c1e4b2-6f70-4d8e-a144-3f8b5c904004",
+      "latency_ms": 4.732500005047768,
+      "scheduled_latency_ms": 6.371750001562759,
+      "error": null
+    },
+    {
+      "path": "/v1/plots",
+      "latency_ms": 5.366249999497086,
+      "scheduled_latency_ms": 7.355082998401485,
+      "error": null
+    },
+    {
+      "path": "/v1/plots/c8f3d1b0-4d2e-5a1b-8b22-1d6e3f702002",
+      "latency_ms": 4.8682499982533045,
+      "scheduled_latency_ms": 5.042207994847558,
+      "error": null
+    },
+    {
+      "path": "/v1/crops",
+      "latency_ms": 4.983500002708752,
+      "scheduled_latency_ms": 5.721124995034188,
+      "error": null
+    },
+    {
+      "path": "/v1/crops/bell-pepper",
+      "latency_ms": 5.65058299980592,
+      "scheduled_latency_ms": 10.838874994078651,
+      "error": null
+    },
+    {
+      "path": "/v1/soils",
+      "latency_ms": 4.910791998554487,
+      "scheduled_latency_ms": 5.616249996819533,
+      "error": null
+    },
+    {
+      "path": "/v1/soils/clay-loam",
+      "latency_ms": 4.341042003943585,
+      "scheduled_latency_ms": 9.471167002629954,
+      "error": null
+    },
+    {
+      "path": "/v1/emitters",
+      "latency_ms": 4.476666996197309,
+      "scheduled_latency_ms": 8.29324999358505,
+      "error": null
+    },
+    {
+      "path": "/v1/emitters/dripnet-pc-0.6",
+      "latency_ms": 6.461416000092868,
+      "scheduled_latency_ms": 11.622582998825237,
+      "error": null
+    },
+    {
+      "path": "/v1/farms",
+      "latency_ms": 3.8350830000126734,
+      "scheduled_latency_ms": 4.799457994522527,
+      "error": null
+    },
+    {
+      "path": "/v1/farms/a9c1e4b2-6f70-4d8e-a144-3f8b5c904004",
+      "latency_ms": 3.682375005155336,
+      "scheduled_latency_ms": 4.824750001716893,
+      "error": null
+    },
+    {
+      "path": "/v1/plots",
+      "latency_ms": 4.248375000315718,
+      "scheduled_latency_ms": 9.43783300317591,
+      "error": null
+    },
+    {
+      "path": "/v1/plots/c8f3d1b0-4d2e-5a1b-8b22-1d6e3f702002",
+      "latency_ms": 3.7707500014221296,
+      "scheduled_latency_ms": 5.589499996858649,
+      "error": null
+    },
+    {
+      "path": "/v1/crops",
+      "latency_ms": 3.8628330003120936,
+      "scheduled_latency_ms": 4.474082998058293,
+      "error": null
+    },
+    {
+      "path": "/v1/crops/bell-pepper",
+      "latency_ms": 5.028291998314671,
+      "scheduled_latency_ms": 10.167374995944556,
+      "error": null
+    },
+    {
+      "path": "/v1/soils",
+      "latency_ms": 5.114667001180351,
+      "scheduled_latency_ms": 6.267625001783017,
+      "error": null
+    },
+    {
+      "path": "/v1/soils/clay-loam",
+      "latency_ms": 4.223832998832222,
+      "scheduled_latency_ms": 4.549625002255198,
+      "error": null
+    },
+    {
+      "path": "/v1/emitters",
+      "latency_ms": 5.0325000047450885,
+      "scheduled_latency_ms": 7.093916996382177,
+      "error": null
+    },
+    {
+      "path": "/v1/emitters/dripnet-pc-0.6",
+      "latency_ms": 4.612333999830298,
+      "scheduled_latency_ms": 7.178416992246639,
+      "error": null
+    },
+    {
+      "path": "/v1/farms",
+      "latency_ms": 4.227125005854759,
+      "scheduled_latency_ms": 5.983208000543527,
+      "error": null
+    },
+    {
+      "path": "/v1/farms/a9c1e4b2-6f70-4d8e-a144-3f8b5c904004",
+      "latency_ms": 3.7619159993482754,
+      "scheduled_latency_ms": 4.468957995413803,
+      "error": null
+    },
+    {
+      "path": "/v1/plots",
+      "latency_ms": 5.211124997003935,
+      "scheduled_latency_ms": 10.37358299799962,
+      "error": null
+    },
+    {
+      "path": "/v1/plots/c8f3d1b0-4d2e-5a1b-8b22-1d6e3f702002",
+      "latency_ms": 3.669333003927022,
+      "scheduled_latency_ms": 8.78174999525072,
+      "error": null
+    },
+    {
+      "path": "/v1/crops",
+      "latency_ms": 2.9940000022179447,
+      "scheduled_latency_ms": 3.9272079957299866,
+      "error": null
+    },
+    {
+      "path": "/v1/crops/bell-pepper",
+      "latency_ms": 4.3122079950990155,
+      "scheduled_latency_ms": 5.276749994663987,
+      "error": null
+    },
+    {
+      "path": "/v1/soils",
+      "latency_ms": 4.630249997717328,
+      "scheduled_latency_ms": 5.96154199593002,
+      "error": null
+    },
+    {
+      "path": "/v1/soils/clay-loam",
+      "latency_ms": 4.916875004710164,
+      "scheduled_latency_ms": 10.083583001687657,
+      "error": null
+    },
+    {
+      "path": "/v1/emitters",
+      "latency_ms": 4.725457998574711,
+      "scheduled_latency_ms": 6.7298749927431345,
+      "error": null
+    },
+    {
+      "path": "/v1/emitters/dripnet-pc-0.6",
+      "latency_ms": 4.1657919937279075,
+      "scheduled_latency_ms": 5.230624992691446,
+      "error": null
+    },
+    {
+      "path": "/v1/farms",
+      "latency_ms": 3.4019579979940318,
+      "scheduled_latency_ms": 3.890249994583428,
+      "error": null
+    },
+    {
+      "path": "/v1/farms/a9c1e4b2-6f70-4d8e-a144-3f8b5c904004",
+      "latency_ms": 4.757041999255307,
+      "scheduled_latency_ms": 9.927874998538755,
+      "error": null
+    },
+    {
+      "path": "/v1/plots",
+      "latency_ms": 4.102917002455797,
+      "scheduled_latency_ms": 5.649541999446228,
+      "error": null
+    },
+    {
+      "path": "/v1/plots/c8f3d1b0-4d2e-5a1b-8b22-1d6e3f702002",
+      "latency_ms": 4.537000000709668,
+      "scheduled_latency_ms": 6.689249996270519,
+      "error": null
+    },
+    {
+      "path": "/v1/crops",
+      "latency_ms": 3.612292006437201,
+      "scheduled_latency_ms": 4.175499998382293,
+      "error": null
+    },
+    {
+      "path": "/v1/crops/bell-pepper",
+      "latency_ms": 4.6790000051259995,
+      "scheduled_latency_ms": 6.815332999394741,
+      "error": null
+    },
+    {
+      "path": "/v1/soils",
+      "latency_ms": 5.465041998832021,
+      "scheduled_latency_ms": 10.68591699731769,
+      "error": null
+    },
+    {
+      "path": "/v1/soils/clay-loam",
+      "latency_ms": 6.161666999105364,
+      "scheduled_latency_ms": 11.409667000407353,
+      "error": null
+    },
+    {
+      "path": "/v1/emitters",
+      "latency_ms": 4.338082995673176,
+      "scheduled_latency_ms": 4.739832991617732,
+      "error": null
+    },
+    {
+      "path": "/v1/emitters/dripnet-pc-0.6",
+      "latency_ms": 5.668584002705757,
+      "scheduled_latency_ms": 10.838916998181958,
+      "error": null
+    },
+    {
+      "path": "/v1/farms",
+      "latency_ms": 4.004875001555774,
+      "scheduled_latency_ms": 5.121082998812199,
+      "error": null
+    },
+    {
+      "path": "/v1/farms/a9c1e4b2-6f70-4d8e-a144-3f8b5c904004",
+      "latency_ms": 5.670416001521517,
+      "scheduled_latency_ms": 10.888083001191262,
+      "error": null
+    },
+    {
+      "path": "/v1/plots",
+      "latency_ms": 5.314165995514486,
+      "scheduled_latency_ms": 9.309957997174934,
+      "error": null
+    },
+    {
+      "path": "/v1/plots/c8f3d1b0-4d2e-5a1b-8b22-1d6e3f702002",
+      "latency_ms": 5.561624995607417,
+      "scheduled_latency_ms": 9.64312499127118,
+      "error": null
+    },
+    {
+      "path": "/v1/crops",
+      "latency_ms": 4.997207994165365,
+      "scheduled_latency_ms": 7.697749992075842,
+      "error": null
+    },
+    {
+      "path": "/v1/crops/bell-pepper",
+      "latency_ms": 5.000625002139714,
+      "scheduled_latency_ms": 6.686832995910663,
+      "error": null
+    },
+    {
+      "path": "/v1/soils",
+      "latency_ms": 5.594542002654634,
+      "scheduled_latency_ms": 8.30054200196173,
+      "error": null
+    },
+    {
+      "path": "/v1/soils/clay-loam",
+      "latency_ms": 5.629125000268687,
+      "scheduled_latency_ms": 7.895707996794954,
+      "error": null
+    },
+    {
+      "path": "/v1/emitters",
+      "latency_ms": 5.552707996685058,
+      "scheduled_latency_ms": 9.768707990588155,
+      "error": null
+    },
+    {
+      "path": "/v1/emitters/dripnet-pc-0.6",
+      "latency_ms": 4.507167002884671,
+      "scheduled_latency_ms": 8.896291998098604,
+      "error": null
+    },
+    {
+      "path": "/v1/farms",
+      "latency_ms": 3.7819170029251836,
+      "scheduled_latency_ms": 5.800624996481929,
+      "error": null
+    },
+    {
+      "path": "/v1/farms/a9c1e4b2-6f70-4d8e-a144-3f8b5c904004",
+      "latency_ms": 3.5047920027864166,
+      "scheduled_latency_ms": 4.8354169994127005,
+      "error": null
+    },
+    {
+      "path": "/v1/plots",
+      "latency_ms": 2.9832500003976747,
+      "scheduled_latency_ms": 8.104499996989034,
+      "error": null
+    },
+    {
+      "path": "/v1/plots/c8f3d1b0-4d2e-5a1b-8b22-1d6e3f702002",
+      "latency_ms": 5.191917000047397,
+      "scheduled_latency_ms": 10.350666991143953,
+      "error": null
+    },
+    {
+      "path": "/v1/crops",
+      "latency_ms": 4.675916003179736,
+      "scheduled_latency_ms": 6.150832996354438,
+      "error": null
+    },
+    {
+      "path": "/v1/crops/bell-pepper",
+      "latency_ms": 5.602375000307802,
+      "scheduled_latency_ms": 7.018541997240391,
+      "error": null
+    },
+    {
+      "path": "/v1/soils",
+      "latency_ms": 6.158292002510279,
+      "scheduled_latency_ms": 11.336499999742955,
+      "error": null
+    },
+    {
+      "path": "/v1/soils/clay-loam",
+      "latency_ms": 3.214999996998813,
+      "scheduled_latency_ms": 6.310582997684833,
+      "error": null
+    },
+    {
+      "path": "/v1/emitters",
+      "latency_ms": 3.784624997933861,
+      "scheduled_latency_ms": 4.196082991256844,
+      "error": null
+    },
+    {
+      "path": "/v1/emitters/dripnet-pc-0.6",
+      "latency_ms": 4.00029199954588,
+      "scheduled_latency_ms": 4.920541992760263,
+      "error": null
+    },
+    {
+      "path": "/v1/farms",
+      "latency_ms": 2.3643340027774684,
+      "scheduled_latency_ms": 2.469291997840628,
+      "error": null
+    },
+    {
+      "path": "/v1/farms/a9c1e4b2-6f70-4d8e-a144-3f8b5c904004",
+      "latency_ms": 4.585041999234818,
+      "scheduled_latency_ms": 9.719875000882894,
+      "error": null
+    },
+    {
+      "path": "/v1/plots",
+      "latency_ms": 5.0783330007107,
+      "scheduled_latency_ms": 6.0932499982300214,
+      "error": null
+    },
+    {
+      "path": "/v1/plots/c8f3d1b0-4d2e-5a1b-8b22-1d6e3f702002",
+      "latency_ms": 5.236708995653316,
+      "scheduled_latency_ms": 10.351666991482489,
+      "error": null
+    },
+    {
+      "path": "/v1/crops",
+      "latency_ms": 4.582708002999425,
+      "scheduled_latency_ms": 9.748707998369355,
+      "error": null
+    },
+    {
+      "path": "/v1/crops/bell-pepper",
+      "latency_ms": 5.478792001667898,
+      "scheduled_latency_ms": 10.696541998186149,
+      "error": null
+    },
+    {
+      "path": "/v1/soils",
+      "latency_ms": 5.644541000947356,
+      "scheduled_latency_ms": 8.919207997678313,
+      "error": null
+    },
+    {
+      "path": "/v1/soils/clay-loam",
+      "latency_ms": 5.230082999332808,
+      "scheduled_latency_ms": 7.961957999214064,
+      "error": null
+    },
+    {
+      "path": "/v1/emitters",
+      "latency_ms": 4.446582999662496,
+      "scheduled_latency_ms": 6.035624996002298,
+      "error": null
+    },
+    {
+      "path": "/v1/emitters/dripnet-pc-0.6",
+      "latency_ms": 3.9204579952638596,
+      "scheduled_latency_ms": 5.484999994223472,
+      "error": null
+    },
+    {
+      "path": "/v1/farms",
+      "latency_ms": 3.3855000001494773,
+      "scheduled_latency_ms": 8.502374999807216,
+      "error": null
+    },
+    {
+      "path": "/v1/farms/a9c1e4b2-6f70-4d8e-a144-3f8b5c904004",
+      "latency_ms": 3.481291998468805,
+      "scheduled_latency_ms": 8.61804199666949,
+      "error": null
+    },
+    {
+      "path": "/v1/plots",
+      "latency_ms": 4.599416999553796,
+      "scheduled_latency_ms": 8.08149999647867,
+      "error": null
+    },
+    {
+      "path": "/v1/plots/c8f3d1b0-4d2e-5a1b-8b22-1d6e3f702002",
+      "latency_ms": 3.890249994583428,
+      "scheduled_latency_ms": 9.01595799223287,
+      "error": null
+    },
+    {
+      "path": "/v1/crops",
+      "latency_ms": 4.622958003892563,
+      "scheduled_latency_ms": 9.78449999820441,
+      "error": null
+    },
+    {
+      "path": "/v1/crops/bell-pepper",
+      "latency_ms": 6.1929160001454875,
+      "scheduled_latency_ms": 11.40908299566945,
+      "error": null
+    },
+    {
+      "path": "/v1/soils",
+      "latency_ms": 3.661957998701837,
+      "scheduled_latency_ms": 5.290707995300181,
+      "error": null
+    },
+    {
+      "path": "/v1/soils/clay-loam",
+      "latency_ms": 4.426040999533143,
+      "scheduled_latency_ms": 4.610208001395222,
+      "error": null
+    },
+    {
+      "path": "/v1/emitters",
+      "latency_ms": 2.0996660023229197,
+      "scheduled_latency_ms": 7.2077079967129976,
+      "error": null
+    },
+    {
+      "path": "/v1/emitters/dripnet-pc-0.6",
+      "latency_ms": 22.879209005623125,
+      "scheduled_latency_ms": 23.736791998089757,
+      "error": null
+    },
+    {
+      "path": "/v1/farms",
+      "latency_ms": 2.629041002364829,
+      "scheduled_latency_ms": 5.634082997858059,
+      "error": null
+    },
+    {
+      "path": "/v1/farms/a9c1e4b2-6f70-4d8e-a144-3f8b5c904004",
+      "latency_ms": 2.9309169985936023,
+      "scheduled_latency_ms": 8.026666997466236,
+      "error": null
+    },
+    {
+      "path": "/v1/plots",
+      "latency_ms": 3.534208000928629,
+      "scheduled_latency_ms": 5.247082997811958,
+      "error": null
+    },
+    {
+      "path": "/v1/plots/c8f3d1b0-4d2e-5a1b-8b22-1d6e3f702002",
+      "latency_ms": 3.476540994597599,
+      "scheduled_latency_ms": 5.20608299120795,
+      "error": null
+    },
+    {
+      "path": "/v1/crops",
+      "latency_ms": 7.037791998300236,
+      "scheduled_latency_ms": 9.119541995460168,
+      "error": null
+    },
+    {
+      "path": "/v1/crops/bell-pepper",
+      "latency_ms": 3.798750003625173,
+      "scheduled_latency_ms": 5.566207997617312,
+      "error": null
+    },
+    {
+      "path": "/v1/soils",
+      "latency_ms": 6.385374996170867,
+      "scheduled_latency_ms": 11.578416997508612,
+      "error": null
+    },
+    {
+      "path": "/v1/soils/clay-loam",
+      "latency_ms": 5.382457995438017,
+      "scheduled_latency_ms": 7.23137499880977,
+      "error": null
+    },
+    {
+      "path": "/v1/emitters",
+      "latency_ms": 6.116374999692198,
+      "scheduled_latency_ms": 8.948832990427036,
+      "error": null
+    },
+    {
+      "path": "/v1/emitters/dripnet-pc-0.6",
+      "latency_ms": 4.020790998765733,
+      "scheduled_latency_ms": 4.401207996124867,
+      "error": null
+    },
+    {
+      "path": "/v1/farms",
+      "latency_ms": 3.4005830020760186,
+      "scheduled_latency_ms": 8.532374995411374,
+      "error": null
+    },
+    {
+      "path": "/v1/farms/a9c1e4b2-6f70-4d8e-a144-3f8b5c904004",
+      "latency_ms": 2.568000003520865,
+      "scheduled_latency_ms": 3.1930420009302907,
+      "error": null
+    },
+    {
+      "path": "/v1/plots",
+      "latency_ms": 4.0866249983082525,
+      "scheduled_latency_ms": 9.19729199813446,
+      "error": null
+    },
+    {
+      "path": "/v1/plots/c8f3d1b0-4d2e-5a1b-8b22-1d6e3f702002",
+      "latency_ms": 3.956125001423061,
+      "scheduled_latency_ms": 5.543082996155135,
+      "error": null
+    },
+    {
+      "path": "/v1/crops",
+      "latency_ms": 4.4459999990067445,
+      "scheduled_latency_ms": 6.450791996030603,
+      "error": null
+    },
+    {
+      "path": "/v1/crops/bell-pepper",
+      "latency_ms": 3.7944579962641,
+      "scheduled_latency_ms": 8.348874995135702,
+      "error": null
+    },
+    {
+      "path": "/v1/soils",
+      "latency_ms": 3.1763339939061552,
+      "scheduled_latency_ms": 3.354791995661799,
+      "error": null
+    },
+    {
+      "path": "/v1/soils/clay-loam",
+      "latency_ms": 3.395917003217619,
+      "scheduled_latency_ms": 7.80829200084554,
+      "error": null
+    },
+    {
+      "path": "/v1/emitters",
+      "latency_ms": 3.1850000013946556,
+      "scheduled_latency_ms": 4.109749992494471,
+      "error": null
+    },
+    {
+      "path": "/v1/emitters/dripnet-pc-0.6",
+      "latency_ms": 3.496875004202593,
+      "scheduled_latency_ms": 5.437291998532601,
+      "error": null
+    },
+    {
+      "path": "/v1/farms",
+      "latency_ms": 50.183084000309464,
+      "scheduled_latency_ms": 52.265791993704624,
+      "error": null
+    },
+    {
+      "path": "/v1/farms/a9c1e4b2-6f70-4d8e-a144-3f8b5c904004",
+      "latency_ms": 4.479582996282261,
+      "scheduled_latency_ms": 9.620207994885277,
+      "error": null
+    },
+    {
+      "path": "/v1/plots",
+      "latency_ms": 3.741708002053201,
+      "scheduled_latency_ms": 4.316375001508277,
+      "error": null
+    },
+    {
+      "path": "/v1/plots/c8f3d1b0-4d2e-5a1b-8b22-1d6e3f702002",
+      "latency_ms": 5.78049999603536,
+      "scheduled_latency_ms": 11.048207990825176,
+      "error": null
+    },
+    {
+      "path": "/v1/crops",
+      "latency_ms": 4.311292002967093,
+      "scheduled_latency_ms": 5.799624996143393,
+      "error": null
+    },
+    {
+      "path": "/v1/crops/bell-pepper",
+      "latency_ms": 5.530417001864407,
+      "scheduled_latency_ms": 10.71724999928847,
+      "error": null
+    },
+    {
+      "path": "/v1/soils",
+      "latency_ms": 3.568833002645988,
+      "scheduled_latency_ms": 7.511499999964144,
+      "error": null
+    },
+    {
+      "path": "/v1/soils/clay-loam",
+      "latency_ms": 4.432250003446825,
+      "scheduled_latency_ms": 9.31562500045402,
+      "error": null
+    },
+    {
+      "path": "/v1/emitters",
+      "latency_ms": 3.6289159979787655,
+      "scheduled_latency_ms": 5.730707991460804,
+      "error": null
+    },
+    {
+      "path": "/v1/emitters/dripnet-pc-0.6",
+      "latency_ms": 5.133208003826439,
+      "scheduled_latency_ms": 7.637374998012092,
+      "error": null
+    }
+  ]
+}

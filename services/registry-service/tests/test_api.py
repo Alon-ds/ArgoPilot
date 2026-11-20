@@ -8,6 +8,7 @@ from datetime import date, timedelta
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from unittest.mock import patch
+from sqlalchemy.exc import ResourceClosedError
 from urllib.parse import urlsplit
 from uuid import UUID, uuid4
 
@@ -227,7 +228,7 @@ class RegistryTests(unittest.IsolatedAsyncioTestCase):
                 self.assertEqual(connection.execute("PRAGMA foreign_keys").fetchone()[0], 1)
                 connection.execute("INSERT INTO farms VALUES (?, ?)", (str(uuid4()), "Rollback"))
                 raise RuntimeError("abort transaction")
-        with self.assertRaises(sqlite3.ProgrammingError):
+        with self.assertRaises(ResourceClosedError):
             connection.execute("SELECT 1")
         with connect_database(self.database) as connection:
             self.assertEqual(connection.execute("SELECT COUNT(*) FROM farms").fetchone()[0], 2)

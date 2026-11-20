@@ -10,6 +10,7 @@ From the repository root:
 ```bash
 cd services/registry-service
 uv sync
+cp .env.example .env
 ```
 
 For the first setup only, create the database:
@@ -18,12 +19,32 @@ For the first setup only, create the database:
 bash seed_registry.sh
 ```
 
-This **deletes and recreates** the target database. Do not rerun it to start the
+The old shell command **deletes and recreates** the target database. Do not rerun it to start the
 service. It creates `registry.db` in the current directory with 2 farms, 4 plots,
 2 crops, 3 soils, and 4 emitters. The service always opens the file in
 `services/registry-service`, regardless of the process working directory.
 An absent database returns `503` from database-backed routes; `/health` only
 checks that the application is running.
+
+### P2: portable database configuration
+
+All service queries now run through SQLAlchemy. Settings are loaded by
+`config.py` using pydantic-settings. Run from this service directory; the SQLite
+URL is relative to this directory. Copy `.env.example` to `.env`, then choose
+`DATABASE_URL=sqlite:///registry.db` for development or
+`DATABASE_URL=postgresql+psycopg://USER:PASSWORD@localhost:5432/registry` for
+PostgreSQL. Changing backends needs no code edits.
+
+Create an empty PostgreSQL database named `registry` with your local PostgreSQL
+tools (`createdb registry`). One command creates the schema and all 15 seed rows:
+
+```bash
+uv run python -m seed
+```
+
+This command refuses an already populated schema, rather than deleting user
+data. Original seed IDs and values come from the SQL section of
+`seed_registry.sh`; SQLite-only PRAGMA is excluded on this path.
 
 Start the service from this directory:
 

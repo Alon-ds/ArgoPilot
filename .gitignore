@@ -19,6 +19,9 @@ venv/
 .mypy_cache/
 .coverage
 htmlcov/
+node_modules/
+.next/
+*.tsbuildinfo
 
 # Local registry data (recreated from seed_registry.sh)
 services/registry-service/registry.db
