@@ -87,5 +87,5 @@ The Badge and Alert source comes from the official shadcn `new-york-v4` registry
 [Alert](https://ui.shadcn.com/r/styles/new-york-v4/alert.json)); only the `cn`
 import is mapped to this app's utility. Badge uses the actual `radix-ui` Slot.
 These components are installed as local source, shadcn's standard ownership model.
-The requested Anthropic frontend-design skill was fetched and read; the installed
-copy at `.claude/skills/frontend-design/SKILL.md` was also read.
+The frontend-design guidance was reviewed and is installed for Codex at
+`.agents/skills/frontend-design/SKILL.md`.

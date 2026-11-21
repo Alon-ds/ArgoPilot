@@ -21,7 +21,7 @@ audit.
 Both findings were reported immediately in the research task's progress channel.
 Neither requires changing the task's chosen unadjusted Kc or half-capacity
 policy. No arithmetic error was found in the three cases checked below.
-[Task policy](../../../../.claude/skills/irrigation-calc-reference/SKILL.md);
+[Task policy](../../../../.agents/skills/irrigation-calc-reference/SKILL.md);
 [reviewed implementation](../../engine.py).
 
 ## Verified primary-source facts
@@ -46,7 +46,7 @@ development/late interpolation. [FAO Chapter 6, Tables 11–12 and Eq. 66](https
 
 The engine selects tomato end Kc 0.80, pepper initial length 30, and the listed
 tomato stages. Its age-zero convention and indefinite post-season clamp are
-explicit task choices. [Reference, crop curve](../../../../.claude/skills/irrigation-calc-reference/SKILL.md#inputs-and-crop-curve);
+explicit task choices. [Reference, crop curve](../../../../.agents/skills/irrigation-calc-reference/SKILL.md#inputs-and-crop-curve);
 [engine, CROPS and crop_kc](../../engine.py).
 
 ### Roots and water balance
@@ -72,7 +72,7 @@ late season. It is not a universal half-capacity refill algorithm.
 ## Task policy versus FAO
 
 The following implementation statements come from the
-[irrigation reference](../../../../.claude/skills/irrigation-calc-reference/SKILL.md#daily-projection-and-units)
+[irrigation reference](../../../../.agents/skills/irrigation-calc-reference/SKILL.md#daily-projection-and-units)
 and [engine.project](../../engine.py), not inferred FAO prescriptions:
 
 - Each request begins at full capacity `C=available_water_mm_per_m×root_m`.
@@ -96,12 +96,12 @@ Derived units: 1 mm over 1 m² = 0.001 m³ = 1 L. Therefore
 `litres=D×area`, emitter count is `area/(row_spacing×emitter_spacing)`, and
 minutes are `ceil(litres/count/flow_lph×60)`. These hydraulic choices and
 continuous emitter counts are stated in the
-[reference](../../../../.claude/skills/irrigation-calc-reference/SKILL.md#daily-projection-and-units).
+[reference](../../../../.agents/skills/irrigation-calc-reference/SKILL.md#daily-projection-and-units).
 
 ## Independent numerical verification
 
 All following numbers are independently derived from the
-[three reference cases](../../../../.claude/skills/irrigation-calc-reference/SKILL.md#three-hand-calculations),
+[three reference cases](../../../../.agents/skills/irrigation-calc-reference/SKILL.md#three-hand-calculations),
 then compared with the actual [engine.project](../../engine.py) output.
 Python `fractions.Fraction` provided exact expected arithmetic. The planner's
 existing `.venv/bin/python` ran an inline harness, with bytecode writes disabled;
