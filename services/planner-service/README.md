@@ -71,7 +71,7 @@ this planner's assigned directories do not include the frontend.
 
 ## Calculation policy and research provenance
 
-The [reference skill](../../.claude/skills/irrigation-calc-reference/SKILL.md)
+The [reference skill](../../.agents/skills/irrigation-calc-reference/SKILL.md)
 is the calculation contract, including three hand examples and units.
 [Existing research](docs/research/fao56.md) is preserved unchanged.
 

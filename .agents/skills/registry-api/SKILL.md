@@ -36,8 +36,14 @@ Preserve other documented error behavior, such as `405 METHOD_NOT_ALLOWED` with 
 
 Cover success and every applicable failure at the HTTP boundary. Exercise the new or changed route itself, including errors produced by shared handlers. Assert the status, content type, stable code, and required headers. For example, a UUID-based database-backed read needs separate checks for malformed UUID, unknown ID, and database unavailability.
 
-From `services/registry-service`, run the registry test command used by the project's CI. The current suite uses:
+From `services/registry-service`, install the locked dependencies and run the
+same pytest and coverage command used by the project's CI:
 
 ```bash
-uv run python -W error::ResourceWarning -m unittest discover -s tests -v
+uv sync --locked --python 3.12
+DATABASE_URL=sqlite:///registry.db \
+  uv run --no-sync python -m pytest --cov --cov-report=term --cov-report=html
 ```
+
+The suite includes pytest-native tests, and Registry coverage must remain at
+100% for both lines and branches.

@@ -22,6 +22,7 @@ htmlcov/
 node_modules/
 .next/
 *.tsbuildinfo
+output/pdf/*.pdf
 
 # Local registry data (recreated from seed_registry.sh)
 services/registry-service/registry.db
