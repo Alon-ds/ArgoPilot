@@ -12,8 +12,9 @@ performance measurements, short-lived branches, pull requests, and GitHub
 Actions.
 
 make server up 
+./dev.sh
 
-./dev.sh stop
+server stop 
 ./dev.sh
 
 > **Project status:** the application and its automated checks are complete.
