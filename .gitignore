@@ -24,6 +24,9 @@ node_modules/
 *.tsbuildinfo
 output/pdf/*.pdf
 
+# Local service logs written by dev.sh
+tmp/
+
 # Local registry data (recreated from seed_registry.sh)
 services/registry-service/registry.db
 services/registry-service/registry.db-journal

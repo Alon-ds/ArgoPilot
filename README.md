@@ -268,7 +268,7 @@ ArgoPilot/
 │   ├── weather-service/
 │   ├── planner-service/
 │   └── frontend/
-├── dev.sh                           # start / stop all services locally
+├── dev.sh                           # start / stop / status for the whole local stack
 ├── AGENTS.md                        # repository instructions for Codex
 └── README.md
 ```
@@ -297,7 +297,9 @@ cd ArgoPilot
 ### One-command start (recommended)
 
 `dev.sh` starts all four services in the background, waits for each to pass its
-health check, and prints the URLs.
+health check, and prints the URLs. It refuses to start when a port is already
+taken, so a second stack can never run beside the first and disagree with it
+about which database was written to.
 
 **First-time setup** — run once before the first `dev.sh`:
 
@@ -325,40 +327,55 @@ cd services/frontend && npm ci && cp .env.example .env.local && cd ../..
 ./dev.sh
 ```
 
-**Stop all services:**
+**See what is running, and stop it:**
 
 ```bash
+./dev.sh status
 ./dev.sh stop
 ```
+
+`status` prints each service's port and PID, and `stop` ends whatever listens on
+those ports — including services left over from an earlier session that was
+closed without stopping them.
 
 Logs are written to `tmp/logs/` (one file per service).
 
 Open <http://localhost:3000>. Health endpoints are available at `/health` on
 each Python service; FastAPI documentation at `/docs`.
 
+The default ports are `8000` registry, `8001` weather, `8002` planner and `3000`
+frontend, matching `services/frontend/.env.example`. Override any of them for a
+single run, and the frontend is pointed at the ports you chose:
+
+```bash
+REGISTRY_PORT=18000 FRONTEND_PORT=3001 ./dev.sh
+```
+
 ### Manual start (one terminal per service)
 
-If you prefer to watch each service's output directly:
+If you prefer to watch each service's output directly. These are the ports the
+frontend expects from `.env.example`; changing one here means changing it in
+`.env.local` too.
 
 **Terminal 1 — Registry**
 
 ```bash
 cd services/registry-service
-uv run uvicorn main:app --host 127.0.0.1 --port 18000
+uv run uvicorn main:app --host 127.0.0.1 --port 8000
 ```
 
 **Terminal 2 — Weather**
 
 ```bash
 cd services/weather-service
-uv run uvicorn main:app --host 127.0.0.1 --port 18001
+uv run uvicorn main:app --host 127.0.0.1 --port 8001
 ```
 
 **Terminal 3 — Planner**
 
 ```bash
 cd services/planner-service
-uv run uvicorn main:app --factory --host 127.0.0.1 --port 18002
+uv run uvicorn main:app --factory --host 127.0.0.1 --port 8002
 ```
 
 **Terminal 4 — Frontend**
