@@ -36,6 +36,6 @@ services/registry-service/registry.db-shm
 .vscode/*
 !.vscode/launch.json
 
-# Claude Code local settings
-.claude/settings.json
+# Claude Code machine-local settings (settings.json is committed: it carries
+# the project-wide deny rules every clone should enforce)
 .claude/settings.local.json
