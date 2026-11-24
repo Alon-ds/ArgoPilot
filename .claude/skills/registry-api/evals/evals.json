@@ -1,0 +1,79 @@
+[
+  {
+    "id": "skill-loads-for-new-endpoint",
+    "description": "Skill should load when asked to add a new registry endpoint",
+    "prompt": "Add GET /v1/farms/{id}/summary that returns plot_count and total_area_m2. An unknown farm id should return 404.",
+    "skill_should_load": true,
+    "checks": [
+      {
+        "type": "code",
+        "description": "New endpoint exists in farms.py",
+        "command": "grep -q 'summary' /Users/alon/ArgoPilot/services/registry-service/farms.py && echo PASS || echo FAIL"
+      },
+      {
+        "type": "code",
+        "description": "Returns 404 for unknown farm",
+        "command": "cd /Users/alon/ArgoPilot/services/registry-service && DATABASE_URL=sqlite:///registry.db uv run --no-sync python -m pytest tests/test_api.py::RegistryTests::test_farm_summary -x -q 2>&1 | tail -3"
+      },
+      {
+        "type": "code",
+        "description": "Coverage stays at 100%",
+        "command": "cd /Users/alon/ArgoPilot/services/registry-service && DATABASE_URL=sqlite:///registry.db uv run --no-sync python -m pytest --cov --cov-report=term -q 2>&1 | grep -E 'TOTAL|passed|failed' | tail -5"
+      },
+      {
+        "type": "llm_judge",
+        "description": "Error response uses application/problem+json with stable code NOT_FOUND",
+        "check": "The test for the unknown farm id asserts content-type application/problem+json and code NOT_FOUND"
+      }
+    ]
+  },
+  {
+    "id": "skill-loads-for-patch-behavior",
+    "description": "Skill should load when asked about PATCH update behavior",
+    "prompt": "Change PATCH /v1/plots/{id} so that sending an empty body {} returns the current plot unchanged instead of a validation error.",
+    "skill_should_load": true,
+    "checks": [
+      {
+        "type": "code",
+        "description": "Empty PATCH returns 200 with existing data",
+        "command": "cd /Users/alon/ArgoPilot/services/registry-service && DATABASE_URL=sqlite:///registry.db uv run --no-sync python -m pytest tests/test_api.py -k 'partial_update' -x -q 2>&1 | tail -3"
+      },
+      {
+        "type": "llm_judge",
+        "description": "Implementation only updates explicitly provided fields",
+        "check": "The PATCH handler uses model_fields_set or equivalent to skip omitted fields, not just checking for None"
+      }
+    ]
+  },
+  {
+    "id": "skill-does-not-load-for-unrelated-domain",
+    "description": "Skill should NOT load for a question about irrigation math",
+    "prompt": "What does available_water_mm_per_m mean in the soil model?",
+    "skill_should_load": false,
+    "checks": [
+      {
+        "type": "llm_judge",
+        "description": "Response answers from general knowledge, does not reference registry-api conventions",
+        "check": "The response explains the soil field without mentioning /v1 routes, RFC 9457, or test coverage requirements"
+      }
+    ]
+  },
+  {
+    "id": "skill-loads-for-error-handling",
+    "description": "Skill should load when fixing an error that returns wrong format",
+    "prompt": "The registry is returning FastAPI's default {\"detail\": \"Not Found\"} instead of our problem+json format. Fix it.",
+    "skill_should_load": true,
+    "checks": [
+      {
+        "type": "code",
+        "description": "All 404 responses use application/problem+json",
+        "command": "cd /Users/alon/ArgoPilot/services/registry-service && DATABASE_URL=sqlite:///registry.db uv run --no-sync python -m pytest tests/test_api.py -k 'NOT_FOUND' -x -q 2>&1 | tail -3"
+      },
+      {
+        "type": "llm_judge",
+        "description": "Fix uses the shared exception handler, not per-route try/except",
+        "check": "The solution routes through the existing HTTPException handler or problem+json middleware, not a local try/except that constructs the dict manually"
+      }
+    ]
+  }
+]
