@@ -73,7 +73,13 @@ start_all() {
   (cd "$REPO/services/weather-service" && exec uv run uvicorn main:app \
     --host 127.0.0.1 --port "$WEATHER_PORT" --no-access-log) >"$LOGS/weather.log" 2>&1 &
 
-  (cd "$REPO/services/planner-service" && exec uv run uvicorn main:app --factory \
+  # The planner calls the other two. Exporting their URLs (pydantic-settings reads the
+  # environment before .env) keeps it pointed at the ports this script actually started,
+  # instead of whatever its .env was last set to.
+  (cd "$REPO/services/planner-service" \
+    && REGISTRY_URL="http://127.0.0.1:$REGISTRY_PORT" \
+       WEATHER_URL="http://127.0.0.1:$WEATHER_PORT" \
+       exec uv run uvicorn main:app --factory \
     --host 127.0.0.1 --port "$PLANNER_PORT" --no-access-log) >"$LOGS/planner.log" 2>&1 &
 
   # Exported URLs beat .env.local (Next.js reads process.env first), so the ports chosen
