@@ -98,16 +98,3 @@ def delete_plot(plot_id: UUID) -> Response:
         find_plot(connection, str(plot_id))
         connection.execute("DELETE FROM plots WHERE id = ?", (str(plot_id),))
     return Response(status_code=204)
-
-@router.get("/{plot_id}/area")
-def get_plot_area(plot_id: UUID):
-    with connect_database() as connection:
-        plot = find_plot(connection, str(plot_id))
-
-    area_m2 = plot["area_m2"]
-
-    return {
-        "plot_id": str(plot_id),
-        "area_m2": area_m2,
-        "area_dunam": area_m2 / 1000,
-    }
