@@ -1,6 +1,6 @@
 ---
 name: registry-api
-description: Use when adding, changing, reviewing, or testing any AgroPilot registry-service endpoint, schema, validation rule, or HTTP error contract. Covers farms, plots, catalog reads (crops, soils, emitters), and the farm summary route.
+description: Use when modifying or debugging the AgroPilot registry-service (farms, plots, crop catalog). Covers: adding new endpoints, changing PATCH semantics (partial updates, empty-body behavior, model_fields_set), fixing error responses to return RFC 9457 problem+json instead of FastAPI defaults, writing integration tests, or correcting HTTP status codes (404/409/422/503). Also use when a route needs to return structured error bodies with a stable `code` field, or when adding summary/aggregation routes to existing resources.
 ---
 
 # Registry API conventions

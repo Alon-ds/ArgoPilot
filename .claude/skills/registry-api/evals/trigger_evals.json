@@ -1,0 +1,22 @@
+[
+  {
+    "id": "skill-loads-for-new-endpoint",
+    "query": "Add GET /v1/farms/{id}/summary that returns plot_count and total_area_m2. An unknown farm id should return 404.",
+    "should_trigger": true
+  },
+  {
+    "id": "skill-loads-for-patch-behavior",
+    "query": "Change PATCH /v1/plots/{id} so that sending an empty body {} returns the current plot unchanged instead of a validation error.",
+    "should_trigger": true
+  },
+  {
+    "id": "skill-does-not-load-for-unrelated-domain",
+    "query": "What does available_water_mm_per_m mean in the soil model?",
+    "should_trigger": false
+  },
+  {
+    "id": "skill-loads-for-error-handling",
+    "query": "The registry is returning FastAPI's default {\"detail\": \"Not Found\"} instead of our problem+json format. Fix it.",
+    "should_trigger": true
+  }
+]
