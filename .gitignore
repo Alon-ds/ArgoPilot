@@ -39,3 +39,7 @@ services/registry-service/registry.db-shm
 # Claude Code machine-local settings (settings.json is committed: it carries
 # the project-wide deny rules every clone should enforce)
 .claude/settings.local.json
+
+# Written by dev.sh at runtime
+tmp/
+.dev-pids
