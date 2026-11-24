@@ -35,3 +35,7 @@ services/registry-service/registry.db-shm
 .idea/
 .vscode/*
 !.vscode/launch.json
+
+# Claude Code local settings
+.claude/settings.json
+.claude/settings.local.json
