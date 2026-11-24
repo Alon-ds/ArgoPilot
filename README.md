@@ -268,6 +268,7 @@ ArgoPilot/
 │   ├── weather-service/
 │   ├── planner-service/
 │   └── frontend/
+├── dev.sh                           # start / stop all services locally
 ├── AGENTS.md                        # repository instructions for Codex
 └── README.md
 ```
@@ -293,50 +294,79 @@ git clone https://github.com/Alon-ds/ArgoPilot.git
 cd ArgoPilot
 ```
 
-Run each service in a separate terminal.
+### One-command start (recommended)
 
-### Terminal 1 - Registry
+`dev.sh` starts all four services in the background, waits for each to pass its
+health check, and prints the URLs.
 
-```bash
-cd services/registry-service
-uv sync --locked
-cp .env.example .env
-uv run python -m seed
-uv run uvicorn main:app --host 127.0.0.1 --port 8000
-```
-
-### Terminal 2 - Weather
+**First-time setup** — run once before the first `dev.sh`:
 
 ```bash
-cd services/weather-service
-uv sync --locked
-cp .env.example .env
-uv run uvicorn main:app --host 127.0.0.1 --port 8001
+# Registry — install deps and seed the database
+cd services/registry-service && uv sync --locked && cp .env.example .env
+uv run python -m seed && cd ../..
+
+# Weather
+cd services/weather-service && uv sync --locked && cp .env.example .env && cd ../..
+
+# Planner
+cd services/planner-service && uv sync --locked && cp .env.example .env && cd ../..
+
+# Frontend
+cd services/frontend && npm ci && cp .env.example .env.local && cd ../..
 ```
-
-### Terminal 3 - Planner
-
-```bash
-cd services/planner-service
-uv sync --locked
-cp .env.example .env
-uv run uvicorn main:app --factory --host 127.0.0.1 --port 8002
-```
-
-### Terminal 4 - Frontend
-
-```bash
-cd services/frontend
-npm ci
-cp .env.example .env.local
-npm run dev
-```
-
-Open <http://localhost:3000>. Health endpoints are available on each Python
-service at `/health`; FastAPI documentation is available at `/docs`.
 
 > Seed only an empty Registry database. The seed command intentionally refuses
 > to replace existing data.
+
+**Start all services:**
+
+```bash
+./dev.sh
+```
+
+**Stop all services:**
+
+```bash
+./dev.sh stop
+```
+
+Logs are written to `tmp/logs/` (one file per service).
+
+Open <http://localhost:3000>. Health endpoints are available at `/health` on
+each Python service; FastAPI documentation at `/docs`.
+
+### Manual start (one terminal per service)
+
+If you prefer to watch each service's output directly:
+
+**Terminal 1 — Registry**
+
+```bash
+cd services/registry-service
+uv run uvicorn main:app --host 127.0.0.1 --port 18000
+```
+
+**Terminal 2 — Weather**
+
+```bash
+cd services/weather-service
+uv run uvicorn main:app --host 127.0.0.1 --port 18001
+```
+
+**Terminal 3 — Planner**
+
+```bash
+cd services/planner-service
+uv run uvicorn main:app --factory --host 127.0.0.1 --port 18002
+```
+
+**Terminal 4 — Frontend**
+
+```bash
+cd services/frontend
+npm run dev
+```
 
 ## Configuration
 
