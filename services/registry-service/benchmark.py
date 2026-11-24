@@ -10,6 +10,19 @@ import platform
 import time
 from urllib.request import urlopen
 
+from sqlalchemy.engine import make_url
+
+
+def database_dialect() -> str:
+    """Which database this service is configured against.
+
+    NFR-2.2 is a claim about PostgreSQL specifically, so a result that doesn't
+    name the database proves nothing. Only the dialect is recorded: the URL
+    itself carries a password and must never reach a committed report.
+    """
+    from config import settings
+    return make_url(settings.database_url).get_backend_name()
+
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
@@ -89,6 +102,7 @@ def main() -> None:
     report = {
         "started_at_utc": started_at, "platform": platform.platform(),
         "python": platform.python_version(), "base_url": args.base_url,
+        "database_dialect": database_dialect(),
         "duration_seconds": args.duration, "target_total_rps": args.rate,
         "elapsed_seconds": round(elapsed, 3), "total_requests": len(samples),
         "workload": "Round-robin over 10 read endpoints; 10 total requests/second, 1 per endpoint/second at defaults.",
