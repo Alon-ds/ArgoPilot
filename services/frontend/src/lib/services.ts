@@ -10,6 +10,9 @@ const plotSchema = z.object({
   id: z.string().min(1), farm_id: z.string().min(1), name: z.string().min(1),
   area_m2: z.number().positive(), crop_id: z.string(),
 });
+const cropSchema = z.object({ id: z.string().min(1), name: z.string().min(1) });
+const soilSchema = z.object({ id: z.string().min(1), name: z.string().min(1), available_water_mm_per_m: z.number() });
+const emitterSchema = z.object({ id: z.string().min(1), name: z.string().min(1), flow_lph: z.number() });
 const nonnegative = z.number().nonnegative();
 const daySchema = z.object({
   date: z.iso.date(), et0_mm: nonnegative, kc: nonnegative, litres: nonnegative,
@@ -25,6 +28,10 @@ const planSchema = z.object({ plot_id: z.string().min(1), days: z.array(daySchem
 });
 export type Plot = z.infer<typeof plotSchema>;
 export type Plan = z.infer<typeof planSchema>;
+export type Farm = z.infer<typeof farmSchema>;
+export type Crop = z.infer<typeof cropSchema>;
+export type Soil = z.infer<typeof soilSchema>;
+export type Emitter = z.infer<typeof emitterSchema>;
 
 async function request<T>(service: Service, path: string, schema: z.ZodType<T>): Promise<Result<T>> {
   try {
@@ -53,6 +60,40 @@ async function request<T>(service: Service, path: string, schema: z.ZodType<T>):
   }
 }
 
+// Writes surface the registry's problem+json `detail` for 422/409, because that text tells the
+// grower which field to correct. Reads deliberately hide upstream detail (see `request`).
+async function mutate<T>(path: string, body: unknown, schema: z.ZodType<T>): Promise<Result<T>> {
+  try {
+    const response = await fetch(`${config.REGISTRY_URL.replace(/\/$/, "")}${path}`, {
+      method: "POST", cache: "no-store", signal: AbortSignal.timeout(config.SERVICE_TIMEOUT_MS),
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify(body), redirect: "error",
+    });
+    if (!response.ok) {
+      let detail = "";
+      if (response.status === 422 || response.status === 409) {
+        try {
+          const problem: unknown = await response.json();
+          if (problem && typeof problem === "object" && "detail" in problem && typeof problem.detail === "string") {
+            detail = problem.detail.replace(/^body\./, "").slice(0, 300);
+          }
+        } catch { /* Fall through to the generic message below. */ }
+      }
+      return { ok: false, message: detail || `The registry rejected this request (HTTP ${response.status}). Please check the values and try again.` };
+    }
+    const parsed = schema.safeParse(await response.json());
+    if (!parsed.success) return { ok: false, message: "The registry saved the record but returned an unexpected response. Reload to confirm." };
+    return { ok: true, data: parsed.data };
+  } catch {
+    return { ok: false, message: "Registry service could not be reached or timed out. Nothing was saved. Try again shortly." };
+  }
+}
+
+export const createFarm = (name: string) => mutate("/v1/farms", { name }, farmSchema);
+export const createPlot = (plot: Record<string, unknown>) => mutate("/v1/plots", plot, plotSchema);
+export const getCrops = () => request("Registry", "/v1/crops", z.array(cropSchema));
+export const getSoils = () => request("Registry", "/v1/soils", z.array(soilSchema));
+export const getEmitters = () => request("Registry", "/v1/emitters", z.array(emitterSchema));
 export const getFarms = () => request("Registry", "/v1/farms", z.array(farmSchema));
 export const getPlots = () => request("Registry", "/v1/plots", z.array(plotSchema));
 export const getPlot = (id: string) => request("Registry", `/v1/plots/${encodeURIComponent(id)}`, plotSchema);

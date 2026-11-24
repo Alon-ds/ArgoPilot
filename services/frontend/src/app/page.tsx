@@ -5,10 +5,11 @@ import { ServiceError } from "@/components/service-error";
 export default async function HomePage() {
   const [farms, plots] = await Promise.all([getFarms(), getPlots()]);
   return <>
-    <div className="page-intro"><h1>Your farms</h1><p>Choose a plot to see when and how much to water.</p></div>
+    <div className="page-intro"><h1>Your farms</h1><p>Choose a plot to see when and how much to water.</p>
+      <Link href="/manage" className="back-link" prefetch={false}>Add a farm or plot ›</Link></div>
     {!farms.ok && <ServiceError message={farms.message} title="Farms are unavailable" />}
     {!plots.ok && <ServiceError message={plots.message} title="Plots are unavailable" />}
-    {farms.ok && farms.data.length === 0 && <p className="empty">No farms registered yet. Add a farm in the registry to see it here.</p>}
+    {farms.ok && farms.data.length === 0 && <p className="empty">No farms registered yet. <Link href="/manage" prefetch={false} className="plot-link-label">Add your first farm</Link>.</p>}
     {farms.ok && farms.data.map((farm) => {
       const farmPlots = plots.ok ? plots.data.filter((plot) => plot.farm_id === farm.id) : [];
       return <section className="farm" key={farm.id} aria-labelledby={`farm-${farm.id}`}>

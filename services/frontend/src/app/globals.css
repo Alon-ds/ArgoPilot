@@ -85,6 +85,21 @@ h1 { font-size: clamp(28px, 5vw, 40px); font-weight: 650; letter-spacing: -1px; 
 .metadata-error { margin-top: 24px; }
 .retry-button { background: #154b3b; color: white; border: 0; border-radius: 6px; padding: 12px 18px; margin-top: 16px; cursor: pointer; }
 .loading { padding-block: 40px; }
+.entry-section { margin-bottom: 36px; }
+.entry-section h2 { font-size: 23px; font-weight: 650; padding-bottom: 12px; border-bottom: 2px solid #154b3b; }
+.entry-form { display: flex; flex-direction: column; gap: 18px; padding-top: 22px; max-width: 620px; }
+.field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.field-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 18px; }
+.field label { font-size: 14px; font-weight: 600; }
+.field input, .field select { font: inherit; font-size: 16px; color: inherit; min-height: 44px; width: 100%; padding: 10px 12px; border: 1px solid #d6e2df; border-radius: 6px; background: #fff; }
+.field input:focus-visible, .field select:focus-visible { outline: 3px solid #176187; outline-offset: 2px; }
+.field input:user-invalid, .field select:user-invalid { border-color: #763818; }
+.hint { font-size: 13px; color: #526c65; }
+.entry-form button { font: inherit; font-weight: 650; min-height: 48px; padding-inline: 26px; align-self: start; border: none; border-radius: 6px; background: #154b3b; color: #fff; cursor: pointer; }
+.entry-form button:hover:not(:disabled) { background: #0f382c; }
+.entry-form button:disabled { background: #526c65; cursor: progress; }
+.form-ok { border-left: 4px solid #154b3b; background: #edf3f2; padding: 12px 16px; font-size: 14px; color: #154b3b; font-weight: 600; }
+.form-error { border-left: 4px solid #763818; background: #fbeee7; padding: 12px 16px; font-size: 14px; color: #763818; overflow-wrap: anywhere; }
 .skip-link { position: absolute; top: -80px; background: white; padding: 12px; z-index: 10; }
 .skip-link:focus { top: 8px; }
 @media (max-width: 480px) {
@@ -104,4 +119,7 @@ h1 { font-size: clamp(28px, 5vw, 40px); font-weight: 650; letter-spacing: -1px; 
   .plan-table td, .plan-table tbody th { font-size: 12px; }
   .plan-table .stale { font-size: 10px; padding-inline: 4px; }
   .weekly { margin-top: 26px; }
+  .entry-form { gap: 14px; padding-top: 18px; }
+  .field-row { gap: 14px; }
+  .entry-form button { width: 100%; }
 }
