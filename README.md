@@ -11,6 +11,11 @@ line and branch coverage, dependency auditing, browser acceptance tests,
 performance measurements, short-lived branches, pull requests, and GitHub
 Actions.
 
+make server up 
+
+./dev.sh stop
+./dev.sh
+
 > **Project status:** the application and its automated checks are complete.
 > There is no public production deployment. Run the system locally and open
 > <http://localhost:3000>.
