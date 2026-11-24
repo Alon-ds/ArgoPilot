@@ -13,14 +13,18 @@ These instructions apply to the whole repository.
 
 ## Project skills
 
-Reusable Codex skills live under `.agents/skills/`:
+Reusable project skills live under `.claude/skills/`:
 
 - `registry-api` for Registry HTTP contracts and tests.
+- `planner-api` for the Planner HTTP contract and upstream calls.
 - `irrigation-calc-reference` for FAO-56 planner calculations.
 - `frontend-design` for intentional UI design and critique.
-- `research` for evidence gathered from primary sources.
 
 Read the relevant `SKILL.md` before changing that area.
+
+`.claude/skills/` is the single location, so one copy serves every agent and
+the two directories can't drift apart. The `research` skill is installed at
+user level, outside the repo.
 
 ## Verification
 

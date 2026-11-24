@@ -44,6 +44,88 @@ for (const mode of ["error", "invalid", "short", "timeout", "unknown", "yesterda
     if (mode === "error") await page.screenshot({ path: "test-results/plot-error-mobile.png", fullPage: true });
   });
 }
+async function fillPlot(page: import("@playwright/test").Page) {
+  await page.getByLabel("Farm", { exact: true }).selectOption({ label: "Negev farm" });
+  await page.getByLabel("Plot name").fill("West block");
+  await page.getByLabel("Area (m²)").fill("1200");
+  await page.getByLabel("Planting date").fill("2026-03-01");
+  await page.getByLabel("Crop").selectOption("tomato");
+  await page.getByLabel("Soil").selectOption("loam");
+  await page.getByLabel("Emitter", { exact: true }).selectOption("dripnet-pc-1.0");
+  await page.getByLabel("Row spacing (m)").fill("1.5");
+  await page.getByLabel("Emitter spacing (m)").fill("0.4");
+  await page.getByLabel("Latitude").fill("31.25");
+  await page.getByLabel("Longitude").fill("34.79");
+}
+
+test("saves a farm from the form, and the browser calls no service directly", async ({ page }) => {
+  const serviceRequests: string[] = [];
+  page.on("request", (r) => { if (r.url().includes(":18080")) serviceRequests.push(r.url()); });
+  await page.goto("/manage");
+  await page.getByLabel("Farm name").fill("Golan farm");
+  await page.getByRole("button", { name: "Add farm" }).click();
+  await expect(page.getByText('Farm "Golan farm" saved.')).toBeVisible();
+  expect(serviceRequests).toEqual([]);
+});
+
+test("saves a plot with catalogue values chosen from the registry", async ({ page }) => {
+  await page.goto("/manage");
+  await fillPlot(page);
+  await page.getByRole("button", { name: "Add plot" }).click();
+  await expect(page.getByText('Plot "West block" saved.')).toBeVisible();
+});
+
+test("375 px: the entry form fits and submits", async ({ page }) => {
+  await page.setViewportSize({ width: 375, height: 667 });
+  await page.goto("/manage");
+  await expect(page.getByRole("button", { name: "Add plot" })).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.screenshot({ path: "test-results/manage-mobile.png", fullPage: true });
+  await page.getByLabel("Farm name").fill("Phone farm");
+  await page.getByRole("button", { name: "Add farm" }).click();
+  await expect(page.getByText('Farm "Phone farm" saved.')).toBeVisible();
+});
+
+test("the registry's validation message reaches the grower", async ({ page, request }) => {
+  await request.get("http://127.0.0.1:18080/mode?value=reject");
+  await page.goto("/manage");
+  await fillPlot(page);
+  await page.getByRole("button", { name: "Add plot" }).click();
+  await expect(page.getByText(/planting_date must not be in the future/)).toBeVisible();
+  await expect(page.getByText(/saved\./)).toHaveCount(0);
+});
+
+test("a duplicate plot name is reported, not silently dropped", async ({ page, request }) => {
+  await request.get("http://127.0.0.1:18080/mode?value=conflict");
+  await page.goto("/manage");
+  await fillPlot(page);
+  await page.getByRole("button", { name: "Add plot" }).click();
+  await expect(page.getByText("A plot with this name already exists in the farm.")).toBeVisible();
+});
+
+test("an unreadable success response never claims a save", async ({ page, request }) => {
+  await request.get("http://127.0.0.1:18080/mode?value=garbled");
+  await page.goto("/manage");
+  await page.getByLabel("Farm name").fill("Garbled farm");
+  await page.getByRole("button", { name: "Add farm" }).click();
+  await expect(page.getByText(/returned an unexpected response/)).toBeVisible();
+});
+
+test("client-side bounds stop an impossible latitude before the registry", async ({ page }) => {
+  await page.goto("/manage");
+  await fillPlot(page);
+  await page.getByLabel("Latitude").fill("999");
+  await page.getByRole("button", { name: "Add plot" }).click();
+  await expect(page.getByText(/saved\./)).toHaveCount(0);
+});
+
+test("a down registry hides the entry form instead of offering a dead one", async ({ page, request }) => {
+  await request.get("http://127.0.0.1:18080/mode?value=registry-down");
+  await page.goto("/manage");
+  await expect(page.locator('[data-slot="alert"]').first()).toBeVisible();
+  await expect(page.getByText("The form opens once the registry answers.")).toBeVisible();
+});
+
 test("shows all three health checks and down state", async ({ page, request }) => {
   await request.get("http://127.0.0.1:18080/mode?value=health-down");
   await page.goto("/");
