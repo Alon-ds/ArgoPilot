@@ -112,6 +112,28 @@ class RegistryTests(unittest.IsolatedAsyncioTestCase):
         for method in ("GET", "PATCH", "DELETE"):
             self.assert_problem(await self.request(method, path, {} if method == "PATCH" else None), 404, "NOT_FOUND")
 
+    async def test_farm_summary(self):
+        # Farm with plots — total_area_m2 must equal the sum from the seed data
+        farm_id = self.sample["farm_id"]
+        status, _, body = await self.request("GET", f"/v1/farms/{farm_id}/summary")
+        self.assertEqual(status, 200)
+        self.assertIsInstance(body["plot_count"], int)
+        self.assertGreater(body["plot_count"], 0)
+        self.assertGreater(body["total_area_m2"], 0)
+
+        # Empty farm — create a new farm with no plots
+        _, _, farm = await self.request("POST", "/v1/farms", {"name": "Empty farm"})
+        status, _, body = await self.request("GET", f"/v1/farms/{farm['id']}/summary")
+        self.assertEqual(status, 200)
+        self.assertEqual(body, {"plot_count": 0, "total_area_m2": 0})
+
+        # Unknown farm — must return 404 NOT_FOUND
+        self.assert_problem(
+            await self.request("GET", f"/v1/farms/{uuid4()}/summary"),
+            404,
+            "NOT_FOUND",
+        )
+
     async def test_farm_validation_and_delete_conflict(self):
         path = f"/v1/farms/{self.sample['farm_id']}"
         before = (await self.request("GET", path))[2]

@@ -41,6 +41,18 @@ def get_farm(farm_id: UUID):
         return find_farm(connection, str(farm_id))
 
 
+@router.get("/{farm_id}/summary")
+def get_farm_summary(farm_id: UUID):
+    with connect_database() as connection:
+        find_farm(connection, str(farm_id))
+        row = connection.execute(
+            "SELECT COUNT(*) AS plot_count, COALESCE(SUM(area_m2), 0) AS total_area_m2"
+            " FROM plots WHERE farm_id = ?",
+            (str(farm_id),),
+        ).fetchone()
+    return {"plot_count": row[0], "total_area_m2": row[1]}
+
+
 @router.patch("/{farm_id}", response_model=Farm)
 def update_farm(farm_id: UUID, body: FarmPatch):
     with connect_database() as connection:
