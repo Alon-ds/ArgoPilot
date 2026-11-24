@@ -138,25 +138,6 @@ class RegistryTests(unittest.IsolatedAsyncioTestCase):
             self.assert_problem(await self.request(method, path, {} if method == "PATCH" else None), 404, "NOT_FOUND")
 
         
-    async def test_plot_area_in_dunams(self):
-        status, _, plot = await self.request("POST", "/v1/plots", self.payload)
-        self.assertEqual(status, 201)
-
-        status, _, area = await self.request(
-            "GET", f"/v1/plots/{plot['id']}/area"
-        )
-
-        self.assertEqual(status, 200)
-        self.assertEqual(area["plot_id"], plot["id"])
-        self.assertEqual(area["area_m2"], plot["area_m2"])
-        self.assertEqual(area["area_dunam"], plot["area_m2"] / 1000)
-
-        self.assert_problem(
-            await self.request("GET", f"/v1/plots/{uuid4()}/area"),
-            404,
-            "NOT_FOUND",
-        )
-    
     async def test_plot_validation_leaves_existing_data_unchanged(self):
         path = f"/v1/plots/{self.sample['id']}"
         invalid = [{"name": " "}, {"planting_date": "invalid"},

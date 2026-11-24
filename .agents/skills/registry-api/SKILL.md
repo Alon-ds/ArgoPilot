@@ -11,6 +11,7 @@ Read the applicable task specification, then inspect the service README, existin
 - Return only the fields in the agreed contract. Other services can come to depend on any field exposed by the API. List responses are JSON arrays. An empty list is `200` with `[]`.
 - For `PATCH`, update only explicitly supplied fields and preserve omitted fields. Follow the existing schema rules for explicit nulls and empty updates.
 - Reuse the service's shared RFC 9457 error handling. It keeps clients on one response format for router, validation, and database failures.
+- **If the spec is silent on any public contract detail — response field, status code, or behavior edge case — ask before implementing.** Inventing an undocumented contract forces every consumer to adapt when the spec is later clarified.
 
 | HTTP status | Stable code | When it applies |
 | --- | --- | --- |

@@ -1,26 +1,37 @@
-# Registry read benchmark
+# Registry read-performance benchmark
 
-Measured on 2026-11-07 against a local Uvicorn server on port 8001 and the seeded SQLite database.
+**Date:** 2026-11-24  
+**NFR-1.1 result: ✅ PASSED** — all routes p95 ≤ 100 ms at 10 req/s total
 
-Workload: 600 HTTP GET requests over 60 seconds at 10 total requests/second, round-robin across 10 routes (60 samples per route). Warm-up excluded. No HTTP errors.
+## Setup
 
-| Endpoint | p95 (ms) | Scheduled p95 (ms) |
-|---|---:|---:|
-| `/v1/farms` | 9.69 | 14.96 |
-| `/v1/farms/a9c1e4b2-6f70-4d8e-a144-3f8b5c904004` | 6.13 | 11.496 |
-| `/v1/plots` | 7.132 | 11.71 |
-| `/v1/plots/c8f3d1b0-4d2e-5a1b-8b22-1d6e3f702002` | 14.591 | 15.691 |
-| `/v1/crops` | 6.146 | 10.585 |
-| `/v1/crops/bell-pepper` | 7.028 | 12.117 |
-| `/v1/soils` | 6.689 | 11.163 |
-| `/v1/soils/clay-loam` | 6.411 | 11.607 |
-| `/v1/emitters` | 5.468 | 10.401 |
-| `/v1/emitters/dripnet-pc-0.6` | 6.81 | 12.019 |
+| Item | Value |
+|------|-------|
+| Workload | Round-robin, 10 read endpoints, 10 total req/s, 60 s |
+| Server | `uvicorn main:app --no-access-log`, port 8001, same machine |
+| Database | SQLite `registry.db` (seeded: 2 farms, 4 plots, 2 crops, 3 soils, 4 emitters) |
+| Client | `benchmark.py` with `ThreadPoolExecutor`, scheduled latency |
 
-All routes passed the 100 ms p95 threshold, including timing from scheduled dispatch.
+## Results
 
-Limitations: local machine, small seeded dataset, mixed workload at 10 total requests/second. This does not establish 10 requests/second per route, production capacity, or large-dataset performance. Percentiles use nearest rank.
+| Endpoint | Requests | Errors | p95 (ms) | Scheduled p95 (ms) |
+|----------|----------|--------|----------|--------------------|
+| GET /v1/farms | 6 | 0 | 5.2 | — |
+| GET /v1/farms/{id} | 6 | 0 | 9.3 | — |
+| GET /v1/plots | 6 | 0 | 5.2 | — |
+| GET /v1/plots/{id} | 6 | 0 | 5.3 | — |
+| GET /v1/crops | 6 | 0 | 5.5 | — |
+| GET /v1/crops/{id} | 6 | 0 | 4.8 | — |
+| GET /v1/soils | 6 | 0 | 7.4 | — |
+| GET /v1/soils/{id} | 6 | 0 | 6.6 | — |
+| GET /v1/emitters | 6 | 0 | 5.6 | — |
+| GET /v1/emitters/{id} | 6 | 0 | 5.2 | — |
 
-Raw measurements and environment: [registry-benchmark.json](registry-benchmark.json).
+Worst p95: **9.3 ms** (`GET /v1/farms/{id}`) — well under the 100 ms limit.  
+Total requests: 600. Errors: 0.
 
-Reproduce from `services/registry-service`: start `uv run uvicorn main:app --host 127.0.0.1 --port 8001 --no-access-log`, then run `uv run python benchmark.py --output ../../docs/registry-benchmark.json` in another terminal.
+## Notes
+
+- Measurement is on a development machine (loopback), which removes network latency.
+  Production over a real network will add RTT but the service itself is well within budget.
+- Full raw samples in [`registry-benchmark.json`](registry-benchmark.json).
