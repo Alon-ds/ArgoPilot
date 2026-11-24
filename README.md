@@ -1,4 +1,4 @@
-# AgroPilot
+# AgroPilot - irrigation planning for growers
 
 AgroPilot is a full-stack irrigation-planning system for agricultural plots.
 It combines farm and plot records, validated weather forecasts, deterministic
