@@ -29,7 +29,6 @@ export function IrrigationPlan({ plan }: { plan: Plan }) {
         <li>ET0: water lost to the weather.</li>
         <li>Kc: crop factor.</li>
         <li>Soil: water remaining at the end of the day.</li>
-        <li>Plans update when you refresh.</li>
       </ul>
     </section>
   </>;
