@@ -12,6 +12,17 @@ PositiveNumber = Annotated[float, Field(gt=0, allow_inf_nan=False)]
 Latitude = Annotated[float, Field(ge=-90, le=90, allow_inf_nan=False)]
 Longitude = Annotated[float, Field(ge=-180, le=180, allow_inf_nan=False)]
 
+# Drip geometry decides how long the system must run to deliver a given depth,
+# so an out-of-range spacing produces a runtime no grower can act on rather
+# than a visible error: 11 m emitter spacing on a 1111 m2 plot yields 101
+# emitters and a 28-day run for one day's refill. Bounds cover field drip
+# (0.2-0.6 m emitters) through orchard laterals, and reject the rest.
+# Only the request models are bounded. The response model keeps PositiveNumber
+# so plots stored before this rule existed stay readable instead of failing
+# their own GET.
+EmitterSpacing = Annotated[float, Field(gt=0, le=2, allow_inf_nan=False)]
+RowSpacing = Annotated[float, Field(gt=0, le=5, allow_inf_nan=False)]
+
 
 class InputModel(BaseModel):
     model_config = ConfigDict(extra="forbid")
@@ -55,8 +66,8 @@ class PlotCreate(PlantingDateModel):
     crop_id: Name
     planting_date: date
     soil_id: Name
-    row_spacing_m: PositiveNumber
-    emitter_spacing_m: PositiveNumber
+    row_spacing_m: RowSpacing
+    emitter_spacing_m: EmitterSpacing
     emitter_id: Name
     lat: Latitude
     lon: Longitude
@@ -69,8 +80,8 @@ class PlotPatch(PatchModel, PlantingDateModel):
     crop_id: Name | None = None
     planting_date: date | None = None
     soil_id: Name | None = None
-    row_spacing_m: PositiveNumber | None = None
-    emitter_spacing_m: PositiveNumber | None = None
+    row_spacing_m: RowSpacing | None = None
+    emitter_spacing_m: EmitterSpacing | None = None
     emitter_id: Name | None = None
     lat: Latitude | None = None
     lon: Longitude | None = None
