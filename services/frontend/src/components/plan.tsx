@@ -25,7 +25,11 @@ export function IrrigationPlan({ plan }: { plan: Plan }) {
           <td><span>ET0 {number(day.et0_mm)} mm</span><span>Kc {number(day.kc)}</span><span>Soil {number(day.bucket_mm)} mm</span></td>
         </tr>)}</tbody>
       </table>
-      <p className="table-note">ET0: water lost to the weather. Kc: crop factor. Soil: water remaining at the end of the day. Plans update when you refresh.</p>
+      <ul className="table-note">
+        <li>ET0: water lost to the weather.</li>
+        <li>Kc: crop factor.</li>
+        <li>Soil: water remaining at the end of the day.</li>
+      </ul>
     </section>
   </>;
 }
