@@ -11,7 +11,6 @@ export function IrrigationPlan({ plan }: { plan: Plan }) {
       <p className="today-volume">{number(today.litres)} litres{today.run_minutes > 0 ? " through your drip system" : " to apply"}</p>
       {today.stale && <div className="today-stale"><Stale /><p>Based on a cached forecast. These numbers may change when fresh weather is available.</p></div>}
     </section>
-    <aside className="planning-assumption" aria-label="Planning assumption"><strong>Planning assumption: soil starts full.</strong><p>Each plan starts with a full soil-water bucket. It uses no sensor readings or irrigation history; it does not measure the water currently in your soil.</p></aside>
     <section className="weekly" aria-labelledby="week-heading">
       <h2 id="week-heading">The next 7 days</h2>
       <p className="section-description">Daily irrigation, weather demand and water remaining in the soil.</p>

@@ -36,8 +36,14 @@ h1 { font-size: clamp(28px, 5vw, 40px); font-weight: 650; letter-spacing: -1px; 
 .farm-heading h2 { font-size: 23px; font-weight: 650; overflow-wrap: anywhere; min-width: 0; }
 .farm-heading > span { color: #526c65; font-size: 14px; flex-shrink: 0; }
 .plot-list { list-style: none; margin: 0; padding: 0; }
-.plot-list li { border-bottom: 1px solid #d6e2df; }
-.plot-list a { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 22px 12px; min-height: 84px; }
+.plot-list li { border-bottom: 1px solid #d6e2df; display: flex; align-items: stretch; gap: 8px; }
+.plot-list a { flex: 1; min-width: 0; display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 22px 12px; min-height: 84px; }
+.plot-delete-form { display: flex; align-items: center; padding-inline: 8px; }
+.plot-delete { font: inherit; font-size: 13px; color: #763818; background: transparent; border: 1px solid transparent; border-radius: 6px; padding: 8px 10px; min-height: 36px; cursor: pointer; white-space: nowrap; }
+.plot-delete:hover:not(:disabled) { background: #fbeee7; border-color: #dcac88; }
+.plot-delete:focus-visible { outline: 3px solid #176187; outline-offset: 2px; }
+.plot-delete:disabled { color: #526c65; cursor: progress; }
+.plot-delete-error { font-size: 12px; color: #763818; margin-left: 8px; max-width: 20ch; }
 .plot-list a:hover { background: #edf3f2; }
 .plot-list a > div { min-width: 0; overflow-wrap: anywhere; }
 .plot-list h3 { font-size: 18px; font-weight: 600; }

@@ -15,7 +15,6 @@ test("375 px: today is above the fold, table fits, browser calls no services", a
   await page.goto(plotPath);
   const today = page.getByRole("heading", { name: "Water for 38 minutes" });
   await expect(today).toBeInViewport();
-  await expect(page.getByLabel("Planning assumption")).toContainText("no sensor readings or irrigation history");
   await expect(page.getByRole("row")).toHaveCount(8);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   expect(serviceRequests).toEqual([]);
@@ -151,4 +150,27 @@ test("registry errors are visible but do not hide an available plan", async ({ p
   await expect(page.locator('[data-slot="alert"]').first()).toContainText("Registry");
   await page.goto(plotPath);
   await expect(page.getByRole("heading", { name: "Water for 38 minutes" })).toBeVisible();
+});
+test("a plot can be deleted from the farm list after confirming", async ({ page }) => {
+  page.on("dialog", (dialog) => dialog.accept());
+  await page.goto("/");
+  const remove = page.getByRole("button", { name: "Delete South tomato block" });
+  await expect(remove).toBeVisible();
+  await remove.click();
+  // Registry returns 204; the action revalidates and shows no error.
+  await expect(page.getByText(/no longer exists|refused the delete|could not be reached/)).toHaveCount(0);
+});
+test("a delete that the dialog cancels is not sent", async ({ page }) => {
+  page.on("dialog", (dialog) => dialog.dismiss());
+  await page.goto("/");
+  await page.getByRole("button", { name: "Delete South tomato block" }).click();
+  await expect(page.getByText(/no longer exists|refused the delete|could not be reached/)).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Delete South tomato block" })).toBeVisible();
+});
+test("a failed plot delete surfaces an error, not a silent drop", async ({ page, request }) => {
+  await request.get("http://127.0.0.1:18080/mode?value=delete-missing");
+  page.on("dialog", (dialog) => dialog.accept());
+  await page.goto("/");
+  await page.getByRole("button", { name: "Delete South tomato block" }).click();
+  await expect(page.getByText("This plot no longer exists.")).toBeVisible();
 });

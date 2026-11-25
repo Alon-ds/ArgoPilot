@@ -30,6 +30,10 @@ function handle(req, res, body) {
   if (url.pathname === "/registry/v1/emitters") return send(emitters);
   if (url.pathname === "/registry/v1/farms") return send([farm, { id: "empty-farm", name: "New farm" }]);
   if (url.pathname === "/registry/v1/plots") return send([plot]);
+  if (req.method === "DELETE" && url.pathname.startsWith("/registry/v1/plots/")) {
+    if (mode === "delete-missing") return send(problem(404, "Not Found", "Plot not found", "NOT_FOUND"), 404);
+    res.statusCode = 204; res.end(); return;
+  }
   if (url.pathname.startsWith("/registry/v1/plots/")) return send(plot);
   if (url.pathname.includes("/plan")) {
     if (mode === "timeout") return;

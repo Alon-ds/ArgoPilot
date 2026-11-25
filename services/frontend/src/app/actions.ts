@@ -1,7 +1,7 @@
 "use server";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { createFarm, createPlot } from "@/lib/services";
+import { createFarm, createPlot, deletePlot } from "@/lib/services";
 
 export type FormState =
   | { ok: boolean; message: string; values?: Record<string, string>; invalid?: string[]; submittedAt?: number }
@@ -64,4 +64,16 @@ export async function createPlotAction(_previous: FormState, formData: FormData)
   revalidatePath("/");
   revalidatePath("/manage");
   return { ok: true, message: `Plot "${result.data.name}" saved.`, submittedAt };
+}
+
+export async function deletePlotAction(_previous: FormState, formData: FormData): Promise<FormState> {
+  // UUID guard so an empty or tampered id becomes a visible error instead of
+  // a registry 422 that the grower can't act on.
+  const id = z.string().uuid().safeParse(formData.get("id"));
+  if (!id.success) return { ok: false, message: "This plot can't be deleted — its id is missing or malformed." };
+  const result = await deletePlot(id.data);
+  if (!result.ok) return { ok: false, message: result.message ?? "Delete failed." };
+  revalidatePath("/");
+  revalidatePath("/manage");
+  return { ok: true, message: "Plot deleted." };
 }

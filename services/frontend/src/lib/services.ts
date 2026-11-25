@@ -91,6 +91,20 @@ async function mutate<T>(path: string, body: unknown, schema: z.ZodType<T>): Pro
 
 export const createFarm = (name: string) => mutate("/v1/farms", { name }, farmSchema);
 export const createPlot = (plot: Record<string, unknown>) => mutate("/v1/plots", plot, plotSchema);
+
+export async function deletePlot(id: string): Promise<{ ok: boolean; message?: string }> {
+  try {
+    const response = await fetch(`${config.REGISTRY_URL.replace(/\/$/, "")}/v1/plots/${encodeURIComponent(id)}`, {
+      method: "DELETE", cache: "no-store", signal: AbortSignal.timeout(config.SERVICE_TIMEOUT_MS),
+      headers: { Accept: "application/json" }, redirect: "error",
+    });
+    if (response.status === 204) return { ok: true };
+    if (response.status === 404) return { ok: false, message: "This plot no longer exists." };
+    return { ok: false, message: `The registry refused the delete (HTTP ${response.status}).` };
+  } catch {
+    return { ok: false, message: "Registry service could not be reached or timed out. Nothing was deleted." };
+  }
+}
 export const getCrops = () => request("Registry", "/v1/crops", z.array(cropSchema));
 export const getSoils = () => request("Registry", "/v1/soils", z.array(soilSchema));
 export const getEmitters = () => request("Registry", "/v1/emitters", z.array(emitterSchema));
