@@ -78,7 +78,9 @@ def test_bucket_threshold_refill_and_http_contract(upstream):
         assert [d["bucket_mm"] for d in days] == pytest.approx([63, 56, 49, 42, 35, 70, 63])
         assert [d["run_minutes"] for d in days] == [0, 0, 0, 0, 0, 1512, 0]
         assert days[5]["litres"] == pytest.approx(42000)
-        assert set(days[0]) == {"date", "et0_mm", "kc", "litres", "run_minutes", "stale", "bucket_mm"}
+        assert set(days[0]) == {"date", "et0_mm", "kc", "litres", "run_minutes", "stale", "bucket_mm", "bucket_pct"}
+        # Soil as a percent of field capacity (70 mm): 63 mm -> 90 %, a refill -> 100 %.
+        assert [d["bucket_pct"] for d in days] == pytest.approx([90, 80, 70, 60, 50, 100, 90])
         assert client.get(f"/v1/plots/{PLOT_ID}/plan").json() == data
     forecast = next(r for r in calls if r.url.path == "/v1/forecast")
     assert dict(forecast.url.params) == {"lat": "31.25", "lon": "34.79", "days": "7"}

@@ -67,5 +67,6 @@ def project(plot: Plot, soil: Soil, emitter: Emitter, forecast: Forecast) -> Pla
         bucket = capacity if irrigate else max(0, projected)
         result.append(PlanDay(date=day.date, et0_mm=day.et0_mm, kc=kc,
                               litres=litres, run_minutes=runtime,
-                              stale=forecast.stale, bucket_mm=bucket))
+                              stale=forecast.stale, bucket_mm=bucket,
+                              bucket_pct=bucket / capacity * 100))
     return Plan(plot_id=plot.id, days=result)

@@ -57,6 +57,7 @@ class PlanDay(BaseModel):
     run_minutes: int = Field(ge=0)
     stale: bool
     bucket_mm: Nonnegative
+    bucket_pct: Nonnegative  # bucket_mm as a percent of field capacity (0-100)
 
 
 class Plan(BaseModel):

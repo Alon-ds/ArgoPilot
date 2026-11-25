@@ -22,13 +22,13 @@ export function IrrigationPlan({ plan }: { plan: Plan }) {
         <tbody>{plan.days.map((day, index) => <tr key={day.date} className={index === 0 ? "today-row" : undefined}>
           <th scope="row">{index === 0 && <span className="table-today">Today</span>}<time dateTime={day.date}>{date(day.date)}</time></th>
           <td><strong>{day.run_minutes === 0 ? "No irrigation" : `${number(day.run_minutes)} min`}</strong><span>{number(day.litres)} L</span>{day.stale && <Stale />}</td>
-          <td><span>ET0 {number(day.et0_mm)} mm</span><span>Kc {number(day.kc)}</span><span>Soil {number(day.bucket_mm)} mm</span></td>
+          <td><span>ET0 {number(day.et0_mm)} mm</span><span>Kc {number(day.kc)}</span><span>Soil {number(day.bucket_mm)} mm ({Math.round(day.bucket_pct)}%)</span></td>
         </tr>)}</tbody>
       </table>
       <ul className="table-note">
         <li>ET0: water lost to the weather.</li>
         <li>Kc: crop factor.</li>
-        <li>Soil: water remaining at the end of the day.</li>
+        <li>Soil: water remaining at the end of the day, and as a percent of a full soil.</li>
       </ul>
     </section>
   </>;

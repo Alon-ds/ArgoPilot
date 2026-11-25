@@ -37,7 +37,7 @@ function handle(req, res, body) {
     if (mode === "unknown") return send({ detail: "Plot not found", code: "NOT_FOUND" }, 404);
     const date = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Jerusalem", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
     const today = Date.parse(`${date}T00:00:00Z`) - (mode === "yesterday" ? 86400000 : 0);
-    const days = Array.from({ length: 7 }, (_, i) => ({ date: new Date(today + i * 86400000).toISOString().slice(0, 10), et0_mm: 6, kc: 1.15, litres: i === 0 && mode !== "dry" ? 6900 : 0, run_minutes: i === 0 && mode !== "dry" ? 38 : 0, stale: mode === "stale", bucket_mm: 35 }));
+    const days = Array.from({ length: 7 }, (_, i) => ({ date: new Date(today + i * 86400000).toISOString().slice(0, 10), et0_mm: 6, kc: 1.15, litres: i === 0 && mode !== "dry" ? 6900 : 0, run_minutes: i === 0 && mode !== "dry" ? 38 : 0, stale: mode === "stale", bucket_mm: 35, bucket_pct: 50 }));
     if (mode === "invalid") delete days[0].run_minutes;
     return send({ plot_id: mode === "mismatch" ? "different-plot" : plot.id, days: mode === "short" ? days.slice(0, 1) : days });
   }
