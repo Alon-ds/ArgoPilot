@@ -5,12 +5,26 @@ import pytest
 from fastapi.testclient import TestClient
 from pydantic import ValidationError
 
+import models
 from config import Settings
-from engine import crop_kc
+from engine import crop_kc, project
 from main import create_app
 
 TODAY = date(2026, 11, 19)
 PLOT_ID = "12345678-1234-1234-1234-123456789012"
+
+
+def _project(weather, *, pct=100, crop="tomato", soil_mm=100, area=1000,
+             row=1.5, emitter=0.4, flow=1.0, max_daily=1440, age=80):
+    """Run the real engine directly for deterministic multi-day scenarios."""
+    plot = models.Plot(id=PLOT_ID, crop_id=crop, planting_date=str(TODAY - timedelta(days=age)),
+                       soil_id="s", emitter_id="e", area_m2=area, row_spacing_m=row,
+                       emitter_spacing_m=emitter, lat=31.25, lon=34.79, initial_soil_pct=pct)
+    forecast = models.Forecast(lat=31.25, lon=34.79, stale=False,
+                               days=[models.ForecastDay(**d) for d in weather])
+    plan = project(plot, models.Soil(id="s", available_water_mm_per_m=soil_mm),
+                   models.Emitter(id="e", flow_lph=flow), forecast, max_daily_minutes=max_daily)
+    return [day.model_dump(mode="json") for day in plan.days]
 
 
 @pytest.fixture
@@ -333,3 +347,66 @@ def test_bad_timezone_and_future_crop():
                  planner_timezone="invalid/timezone")
     with pytest.raises(ValueError):
         crop_kc("tomato", -1)
+
+
+# --- Multi-day scheduling edge cases (regression guards, see §16 of the spec) ---
+
+def test_cycle_latch_continues_above_half_threshold():
+    # A cycle that opens below 50% keeps irrigating on a later day whose bucket
+    # is already back above 50% — the half threshold starts a cycle, it does not
+    # end one. Low ET0 so day two sits well above the 35 mm threshold.
+    days = _project([{"date": str(TODAY + timedelta(days=i)), "et0_mm": 1, "rain_mm": 0}
+                     for i in range(2)], pct=40)
+    assert days[0]["bucket_before_mm"] < 35 and days[0]["irrigation_status"] == "SCHEDULED"
+    assert days[1]["bucket_before_mm"] > 35          # above the trigger
+    assert days[1]["litres"] > 0                      # yet still irrigating
+    assert days[1]["irrigation_status"] in {"CONTINUING", "COMPLETED"}
+
+
+def test_rain_fills_bucket_and_closes_the_cycle():
+    days = _project([{"date": str(TODAY), "et0_mm": 7 / 1.15, "rain_mm": 0},
+                     {"date": str(TODAY + timedelta(days=1)), "et0_mm": 7 / 1.15, "rain_mm": 200}], pct=40)
+    assert days[1]["litres"] == 0                      # rain did the work
+    assert days[1]["bucket_mm"] == pytest.approx(70)
+    assert days[1]["irrigation_status"] == "COMPLETED"
+    assert days[1]["irrigation_in_progress"] is False
+
+
+def test_exactly_one_day_of_demand_is_not_capped():
+    # required == daily capacity (40000 L): scheduled in full, 1440 min, complete.
+    day = _project([{"date": str(TODAY), "et0_mm": 40 / 1.15, "rain_mm": 0}])[0]
+    assert day["required_litres"] == pytest.approx(40000)
+    assert day["litres"] == pytest.approx(40000)
+    assert day["run_minutes"] == 1440
+    assert day["bucket_mm"] == pytest.approx(70)
+    assert day["irrigation_status"] == "COMPLETED"
+
+
+def test_configurable_daily_limit_halves_delivery():
+    # A 720 min (12 h) ceiling delivers half of a full day: 20000 L, bucket +20.
+    day = _project([{"date": str(TODAY), "et0_mm": 7 / 1.15, "rain_mm": 0}], pct=40, max_daily=720)[0]
+    assert day["run_minutes"] == 720
+    assert day["litres"] == pytest.approx(20000)
+    assert day["bucket_mm"] == pytest.approx(41)
+
+
+def test_heavy_rain_never_exceeds_capacity():
+    day = _project([{"date": str(TODAY), "et0_mm": 0, "rain_mm": 500}])[0]
+    assert day["bucket_mm"] == pytest.approx(70)       # clamped to capacity
+    assert day["bucket_pct"] == pytest.approx(100)
+    assert day["irrigation_status"] == "NOT_REQUIRED"
+
+
+def test_invariants_hold_under_insufficient_capacity():
+    # Sparse drip (20 emitters x 0.6 = 12 L/h) can never match a bell pepper's
+    # daily use: the warning fires and the plan stays well-formed every day.
+    days = _project([{"date": str(TODAY + timedelta(days=i)), "et0_mm": 6, "rain_mm": 0}
+                     for i in range(7)], crop="bell-pepper", soil_mm=83, area=100,
+                    row=5, emitter=1, flow=0.6, pct=55)
+    capacity = 83 * 0.5
+    assert any(d["capacity_warning"] for d in days)
+    for d in days:
+        assert 0 <= d["bucket_mm"] <= capacity + 1e-6
+        assert 0 <= d["run_minutes"] <= 1440
+        assert d["remaining_litres"] >= 0 and d["remaining_run_minutes"] >= 0
+        assert d["bucket_pct"] <= 100 + 1e-6
