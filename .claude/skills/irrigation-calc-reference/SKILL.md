@@ -29,12 +29,14 @@ Interpolation follows Chapter 6 Eq. 66; `ETc = ET0*Kc` (mm/day), Eq. 58.
 
 ## Daily projection and units
 
-**Every request starts today with a full bucket.** This is a stateless scenario,
-not measured soil moisture or an irrigation log. Carry water across forecast
-days only. Repeating a request never writes state.
+**Day one starts at the plot's `initial_soil_pct` of field capacity (default
+100 = a full bucket).** This is a stateless scenario, not measured soil moisture
+or an irrigation log: the percent is a grower-entered estimate of today's
+dryness, to be replaced by a sensor feed later. Carry water across forecast days
+only. Repeating a request never writes state.
 
 1. `C = soil.available_water_mm_per_m * root_m` (mm), Chapter 8 Eq. 82 units.
-2. Start `B=C`. Each day `P=min(C, B+rain_mm-ET0_mm*Kc)`; excess drains.
+2. Start `B = C * initial_soil_pct/100`. Each day `P=min(C, B+rain_mm-ET0_mm*Kc)`; excess drains.
 3. If `P<C/2`, irrigation depth `D=C-P`, end bucket `C`; otherwise `D=0`, end `P`.
    Exactly half does not trigger. Float equality uses 1e-9 mm absolute/1e-12
    relative tolerance. Do not clamp negative P before calculating D: this would

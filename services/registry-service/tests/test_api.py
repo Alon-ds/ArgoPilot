@@ -173,6 +173,8 @@ class RegistryTests(unittest.IsolatedAsyncioTestCase):
         invalid.extend({"row_spacing_m": value} for value in (5.1, 50))
         for field, limit in (("lat", 90), ("lon", 180)):
             invalid.extend({field: value} for value in (limit + 1, -limit - 1))
+        # Soil moisture is a percent of field capacity: outside 0-100 is meaningless.
+        invalid.extend({"initial_soil_pct": value} for value in (-1, 101, "NaN", "Infinity"))
         invalid.extend({field: "missing"} for field in ("crop_id", "soil_id", "emitter_id"))
         invalid.extend({field: None} for field in self.payload)
         for change in invalid:
@@ -193,6 +195,23 @@ class RegistryTests(unittest.IsolatedAsyncioTestCase):
                 self.assertEqual(status, 201)
                 for field, value in change.items():
                     self.assertEqual(created[field], value)
+
+    async def test_plot_initial_soil_pct_defaults_full_and_accepts_bounds(self):
+        # Omitting the field keeps the historical full-bucket assumption (100),
+        # so existing callers and pre-existing rows are unchanged; an explicit
+        # 0-100 is stored and served for the planner to start the bucket from.
+        payload = {key: value for key, value in self.payload.items() if key != "initial_soil_pct"}
+        status, _, created = await self.request("POST", "/v1/plots", {**payload, "name": "Default soil"})
+        self.assertEqual(status, 201)
+        self.assertEqual(created["initial_soil_pct"], 100)
+        for pct in (0, 40, 100):
+            with self.subTest(pct=pct):
+                status, _, created = await self.request(
+                    "POST", "/v1/plots", {**self.payload, "initial_soil_pct": pct, "name": f"Soil {pct}"})
+                self.assertEqual(status, 201)
+                self.assertEqual(created["initial_soil_pct"], pct)
+                status, _, fetched = await self.request("GET", f"/v1/plots/{created['id']}")
+                self.assertEqual(fetched["initial_soil_pct"], pct)
 
     async def test_plot_stored_before_the_spacing_rule_stays_readable(self):
         # Rows written when any positive spacing was allowed must keep serving

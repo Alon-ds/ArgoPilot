@@ -85,6 +85,31 @@ def test_bucket_threshold_refill_and_http_contract(upstream):
     assert {r.url.path for r in calls} == {f"/v1/plots/{PLOT_ID}", "/v1/soils/sand", "/v1/emitters/drip", "/v1/forecast"}
 
 
+def test_initial_soil_pct_starts_bucket_below_full_and_irrigates_day_one(upstream):
+    # capacity = 100 mm/m * 0.7 m = 70 mm, threshold 35 mm. A 40% start (28 mm)
+    # already sits below threshold, so day one irrigates and refills to full,
+    # unlike the default full-bucket start which waits days.
+    upstream["plot"]["planting_date"] = str(TODAY - timedelta(days=80))  # mid-season, Kc 1.15
+    upstream["plot"]["initial_soil_pct"] = 40
+    client, _ = client_for(upstream)
+    with client:
+        days = client.get(f"/v1/plots/{PLOT_ID}/plan").json()["days"]
+    assert days[0]["run_minutes"] > 0
+    assert days[0]["litres"] == pytest.approx(49000)  # (70 - 21) mm * 1000 m2
+    assert days[0]["bucket_mm"] == pytest.approx(70)  # refilled to capacity
+
+
+def test_initial_soil_pct_defaults_to_full_when_registry_omits_it(upstream):
+    # An older registry that never sends the field must keep the full-bucket
+    # behavior: no key in the plot payload, no irrigation in a dry winter week.
+    upstream["plot"]["planting_date"] = str(TODAY - timedelta(days=80))
+    assert "initial_soil_pct" not in upstream["plot"]
+    client, _ = client_for(upstream)
+    with client:
+        days = client.get(f"/v1/plots/{PLOT_ID}/plan").json()["days"]
+    assert days[0]["bucket_mm"] == pytest.approx(63)  # 70 full - 7 ETc, not refilled
+
+
 def test_rain_saturation_stale_and_runtime_ceiling(upstream):
     upstream["weather"]["stale"] = True
     upstream["weather"]["days"][0].update(et0_mm=200, rain_mm=300)

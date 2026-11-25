@@ -21,6 +21,9 @@ class Plot(BaseModel):
     emitter_spacing_m: Positive
     lat: float = Field(ge=-90, le=90, allow_inf_nan=False)
     lon: float = Field(ge=-180, le=180, allow_inf_nan=False)
+    # Assumed day-one soil-water level as a percent of field capacity. Defaults
+    # to a full bucket when an older registry omits it.
+    initial_soil_pct: float = Field(ge=0, le=100, default=100, allow_inf_nan=False)
 
 
 class Soil(BaseModel):

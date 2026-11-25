@@ -50,7 +50,7 @@ async function fillPlot(page: import("@playwright/test").Page) {
   await page.getByLabel("Area (m²)").fill("1200");
   await page.getByLabel("Planting date").fill("2026-03-01");
   await page.getByLabel("Crop").selectOption("tomato");
-  await page.getByLabel("Soil").selectOption("loam");
+  await page.getByLabel("Soil", { exact: true }).selectOption("loam");
   await page.getByLabel("Emitter", { exact: true }).selectOption("dripnet-pc-1.0");
   await page.getByLabel("Row spacing (m)").fill("1.5");
   await page.getByLabel("Emitter spacing (m)").fill("0.4");

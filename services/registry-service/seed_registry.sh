@@ -54,6 +54,7 @@ CREATE TABLE plots (
   emitter_id         TEXT NOT NULL REFERENCES emitters(id),
   lat                REAL NOT NULL,
   lon                REAL NOT NULL,
+  initial_soil_pct   REAL NOT NULL DEFAULT 100,
   UNIQUE (farm_id, name)
 );
 

@@ -25,6 +25,7 @@ const plotForm = z.object({
   emitter_id: z.string().min(1, "Choose an emitter."),
   lat: number("Latitude", -90, 90),
   lon: number("Longitude", -180, 180),
+  initial_soil_pct: number("Initial soil moisture", 0, 100),
 });
 
 function firstIssue(error: z.ZodError): string {

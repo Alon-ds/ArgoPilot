@@ -78,6 +78,11 @@ export function AddPlotForm({ farms, crops, soils, emitters, today }: Props) {
         </div>
       </div>
       <span className="hint">The forecast, and so the whole plan, is fetched for these coordinates.</span>
+      <div className="field">
+        <label htmlFor="plot-initial-soil">Initial soil moisture (%)</label>
+        <input id="plot-initial-soil" name="initial_soil_pct" type="number" min="0" max="100" step="any" defaultValue="100" required inputMode="decimal" />
+        <span className="hint">How full the soil is today, from 0 (dry) to 100 (full). Leave at 100 if unsure; lower it when you know the field is partly dry. Sensors will replace this later.</span>
+      </div>
       <button type="submit" disabled={pending}>{pending ? "Saving…" : "Add plot"}</button>
       <FormResult state={state} />
     </form>

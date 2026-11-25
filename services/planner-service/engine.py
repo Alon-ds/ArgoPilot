@@ -44,7 +44,7 @@ def crop_kc(crop_id: str, age_days: int) -> float:
 
 def project(plot: Plot, soil: Soil, emitter: Emitter, forecast: Forecast) -> Plan:
     capacity = soil.available_water_mm_per_m * CROPS[plot.crop_id].root_m
-    bucket = capacity
+    bucket = capacity * plot.initial_soil_pct / 100
     # Exact decimal-rational hydraulic arithmetic avoids a spurious extra minute
     # at integral runtimes (e.g. binary float 3780.0000000000005).
     emitter_count = Fraction(str(plot.area_m2)) / (
