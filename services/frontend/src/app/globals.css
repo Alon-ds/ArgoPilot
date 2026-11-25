@@ -61,6 +61,15 @@ h1 { font-size: clamp(28px, 5vw, 40px); font-weight: 650; letter-spacing: -1px; 
 .planning-assumption { margin-top: 16px; border-left: 4px solid #176187; background: #edf3f2; padding: 12px 16px; font-size: 13px; }
 .planning-assumption strong { color: #154b3b; }
 .planning-assumption p { margin-top: 4px; max-width: 75ch; }
+.today-progress { display: flex; flex-wrap: wrap; gap: 10px 32px; margin-top: 16px; }
+.today-progress div { min-width: 0; }
+.today-progress dt { color: #d0e5dd; font-size: 13px; }
+.today-progress dd { margin: 2px 0 0; font-size: 18px; font-weight: 650; }
+.today-warning { margin-top: 18px; padding: 12px 16px; border-radius: 6px; background: #fff0c5; color: #704700; }
+.today-warning p { margin-top: 4px; font-size: 13px; max-width: 65ch; }
+.horizon-note { margin-top: 16px; border-left: 4px solid #176187; background: #edf3f2; padding: 12px 16px; font-size: 13px; }
+.horizon-note strong { color: #154b3b; }
+.horizon-note p { margin-top: 4px; max-width: 75ch; }
 .today-stale { margin-top: 18px; padding-top: 14px; border-top: 1px solid #5f8578; }
 .today-stale p { margin-top: 6px; font-size: 13px; color: #fff0c5; max-width: 65ch; }
 .stale { background: #fff0c5; color: #704700; border-color: #dfbe72; font-size: 11px; line-height: 1.4; white-space: normal; }

@@ -16,7 +16,13 @@ const emitterSchema = z.object({ id: z.string().min(1), name: z.string().min(1),
 const nonnegative = z.number().nonnegative();
 const daySchema = z.object({
   date: z.iso.date(), et0_mm: nonnegative, kc: nonnegative, litres: nonnegative,
-  run_minutes: nonnegative, stale: z.boolean(), bucket_mm: nonnegative, bucket_pct: nonnegative,
+  run_minutes: nonnegative, stale: z.boolean(),
+  bucket_before_mm: nonnegative, bucket_mm: nonnegative, bucket_pct: nonnegative,
+  required_litres: nonnegative, required_run_minutes: nonnegative,
+  remaining_litres: nonnegative, remaining_run_minutes: nonnegative,
+  irrigation_in_progress: z.boolean(),
+  irrigation_status: z.enum(["NOT_REQUIRED", "SCHEDULED", "CONTINUING", "COMPLETED"]),
+  capacity_warning: z.boolean(),
 });
 const planSchema = z.object({ plot_id: z.string().min(1), days: z.array(daySchema).length(7) }).superRefine((plan, context) => {
   const today = new Intl.DateTimeFormat("en-CA", { timeZone: config.PLAN_TIMEZONE, year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());

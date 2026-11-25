@@ -174,3 +174,30 @@ test("a failed plot delete surfaces an error, not a silent drop", async ({ page,
   await page.getByRole("button", { name: "Delete South tomato block" }).click();
   await expect(page.getByText("This plot no longer exists.")).toBeVisible();
 });
+
+test("an in-progress cycle shows scheduled, remaining and continues-tomorrow", async ({ page, request }) => {
+  await request.get("http://127.0.0.1:18080/mode?value=inprogress");
+  await page.goto(plotPath);
+  await expect(page.getByText("Irrigation in progress")).toBeVisible();
+  await expect(page.getByText(/Scheduled today/)).toBeVisible();
+  await expect(page.getByText(/Remaining water/)).toBeVisible();
+  await expect(page.getByText(/Continues tomorrow/)).toBeVisible();
+});
+
+test("an in-progress cycle shows the hydraulic capacity warning", async ({ page, request }) => {
+  await request.get("http://127.0.0.1:18080/mode?value=inprogress");
+  await page.goto(plotPath);
+  await expect(page.getByText(/cannot supply enough water/i)).toBeVisible();
+});
+
+test("an unfinished cycle at the last forecast day shows the horizon note", async ({ page, request }) => {
+  await request.get("http://127.0.0.1:18080/mode?value=inprogress");
+  await page.goto(plotPath);
+  await expect(page.getByText(/beyond the forecast period/i)).toBeVisible();
+});
+
+test("large runtimes render as hours and minutes", async ({ page, request }) => {
+  await request.get("http://127.0.0.1:18080/mode?value=inprogress");
+  await page.goto(plotPath);
+  await expect(page.getByText(/24h 0m/)).toBeVisible();
+});
