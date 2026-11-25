@@ -95,6 +95,17 @@ test("the registry's validation message reaches the grower", async ({ page, requ
   await expect(page.getByText(/saved\./)).toHaveCount(0);
 });
 
+test("an out-of-range field is cleared on error while the rest is kept", async ({ page }) => {
+  await page.goto("/manage");
+  await fillPlot(page);
+  await page.getByLabel("Row spacing (m)").fill("50"); // above the 5 m bound
+  await page.getByRole("button", { name: "Add plot" }).click();
+  await expect(page.getByText(/Row spacing must be at most 5/)).toBeVisible();
+  await expect(page.getByLabel("Plot name")).toHaveValue("West block"); // kept
+  await expect(page.getByLabel("Soil", { exact: true })).toHaveValue("loam"); // kept
+  await expect(page.getByLabel("Row spacing (m)")).toHaveValue(""); // only this cleared
+});
+
 test("a duplicate plot name is reported, not silently dropped", async ({ page, request }) => {
   await request.get("http://127.0.0.1:18080/mode?value=conflict");
   await page.goto("/manage");

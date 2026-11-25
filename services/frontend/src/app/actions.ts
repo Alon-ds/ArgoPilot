@@ -3,7 +3,9 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createFarm, createPlot } from "@/lib/services";
 
-export type FormState = { ok: boolean; message: string } | null;
+export type FormState =
+  | { ok: boolean; message: string; values?: Record<string, string>; invalid?: string[]; submittedAt?: number }
+  | null;
 
 const farmForm = z.object({ name: z.string().trim().min(1, "Enter a farm name.") });
 
@@ -20,8 +22,8 @@ const plotForm = z.object({
   crop_id: z.string().min(1, "Choose a crop."),
   planting_date: z.iso.date("Enter the planting date as YYYY-MM-DD."),
   soil_id: z.string().min(1, "Choose a soil."),
-  row_spacing_m: number("Row spacing", Number.MIN_VALUE),
-  emitter_spacing_m: number("Emitter spacing", Number.MIN_VALUE),
+  row_spacing_m: number("Row spacing", Number.MIN_VALUE, 5),
+  emitter_spacing_m: number("Emitter spacing", Number.MIN_VALUE, 2),
   emitter_id: z.string().min(1, "Choose an emitter."),
   lat: number("Latitude", -90, 90),
   lon: number("Longitude", -180, 180),
@@ -43,11 +45,23 @@ export async function createFarmAction(_previous: FormState, formData: FormData)
 }
 
 export async function createPlotAction(_previous: FormState, formData: FormData): Promise<FormState> {
-  const parsed = plotForm.safeParse(Object.fromEntries(formData));
-  if (!parsed.success) return { ok: false, message: firstIssue(parsed.error) };
+  const values = Object.fromEntries(
+    [...formData.entries()].map(([key, value]) => [key, String(value)]),
+  );
+  // A fresh nonce each submit lets the form remount so every field — inputs and
+  // selects alike — re-reads its defaultValue (React does not re-apply a changed
+  // defaultValue to an uncontrolled <select> on form reset).
+  const submittedAt = Date.now();
+  const parsed = plotForm.safeParse(values);
+  if (!parsed.success) {
+    // Keep what the grower typed; only the out-of-range fields are cleared so
+    // they can be re-entered, instead of wiping the whole form.
+    const invalid = [...new Set(parsed.error.issues.map((issue) => String(issue.path[0])))];
+    return { ok: false, message: firstIssue(parsed.error), values, invalid, submittedAt };
+  }
   const result = await createPlot(parsed.data);
-  if (!result.ok) return { ok: false, message: result.message };
+  if (!result.ok) return { ok: false, message: result.message, values, invalid: [], submittedAt };
   revalidatePath("/");
   revalidatePath("/manage");
-  return { ok: true, message: `Plot "${result.data.name}" saved.` };
+  return { ok: true, message: `Plot "${result.data.name}" saved.`, submittedAt };
 }
