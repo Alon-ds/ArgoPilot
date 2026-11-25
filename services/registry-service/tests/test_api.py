@@ -167,6 +167,10 @@ class RegistryTests(unittest.IsolatedAsyncioTestCase):
                    {"farm_id": str(uuid4())}, {"farm_id": "invalid"}, {"unexpected": 1}]
         for field in ("area_m2", "row_spacing_m", "emitter_spacing_m"):
             invalid.extend({field: value} for value in (0, -1, "NaN", "Infinity"))
+        # Drip geometry above these bounds yields a runtime nobody can act on
+        # (11 m emitter spacing needs a 28-day run for one day's refill).
+        invalid.extend({"emitter_spacing_m": value} for value in (2.1, 11, 12))
+        invalid.extend({"row_spacing_m": value} for value in (5.1, 50))
         for field, limit in (("lat", 90), ("lon", 180)):
             invalid.extend({field: value} for value in (limit + 1, -limit - 1))
         invalid.extend({field: "missing"} for field in ("crop_id", "soil_id", "emitter_id"))
@@ -176,6 +180,31 @@ class RegistryTests(unittest.IsolatedAsyncioTestCase):
                 self.assert_problem(await self.request("POST", "/v1/plots", {**self.payload, **change}), 422, "VALIDATION")
                 self.assert_problem(await self.request("PATCH", path, change), 422, "VALIDATION")
                 self.assertEqual((await self.request("GET", path))[2], self.sample)
+
+    async def test_plot_spacing_accepts_values_at_the_bounds(self):
+        # The bounds must admit real layouts, orchard laterals included, or the
+        # rule rejects valid plots instead of only impossible ones.
+        for change in ({"row_spacing_m": 5, "emitter_spacing_m": 2},
+                       {"row_spacing_m": 0.2, "emitter_spacing_m": 0.1},
+                       {"row_spacing_m": 1.5, "emitter_spacing_m": 0.4}):
+            with self.subTest(change=change):
+                status, _, created = await self.request(
+                    "POST", "/v1/plots", {**self.payload, **change, "name": f"B{change['emitter_spacing_m']}"})
+                self.assertEqual(status, 201)
+                for field, value in change.items():
+                    self.assertEqual(created[field], value)
+
+    async def test_plot_stored_before_the_spacing_rule_stays_readable(self):
+        # Rows written when any positive spacing was allowed must keep serving
+        # their own GET; tightening the response model would 500 on them.
+        path = f"/v1/plots/{self.sample['id']}"
+        with connect_database(self.database) as connection:
+            connection.execute(
+                "UPDATE plots SET emitter_spacing_m = 11 WHERE id = ?", (self.sample["id"],))
+        status, _, plot = await self.request("GET", path)
+        self.assertEqual(status, 200)
+        self.assertEqual(plot["emitter_spacing_m"], 11)
+        self.assert_problem(await self.request("PATCH", path, {"emitter_spacing_m": 11}), 422, "VALIDATION")
 
     async def test_plot_uniqueness_and_farm_transfer(self):
         status, _, plot = await self.request("POST", "/v1/plots", self.payload)
