@@ -75,30 +75,54 @@ def test_bucket_threshold_refill_and_http_contract(upstream):
         data = response.json()
         assert data["plot_id"] == PLOT_ID
         days = data["days"]
-        assert [d["bucket_mm"] for d in days] == pytest.approx([63, 56, 49, 42, 35, 70, 63])
-        assert [d["run_minutes"] for d in days] == [0, 0, 0, 0, 0, 1512, 0]
-        assert days[5]["litres"] == pytest.approx(42000)
-        assert set(days[0]) == {"date", "et0_mm", "kc", "litres", "run_minutes", "stale", "bucket_mm", "bucket_pct"}
-        # Soil as a percent of field capacity (70 mm): 63 mm -> 90 %, a refill -> 100 %.
-        assert [d["bucket_pct"] for d in days] == pytest.approx([90, 80, 70, 60, 50, 100, 90])
+        # Day 6 needs a 42 mm (42000 L) refill, but 1666.7 emitters x 1 L/h can
+        # pump at most 40000 L in a 24 h day, so it is scheduled for 1440 min and
+        # the bucket reaches only 68 mm. The 2000 L deficit carries to day 7,
+        # which finishes the cycle in 324 min and reaches capacity.
+        assert [d["bucket_mm"] for d in days] == pytest.approx([63, 56, 49, 42, 35, 68, 70])
+        assert [d["run_minutes"] for d in days] == [0, 0, 0, 0, 0, 1440, 324]
+        assert [d["litres"] for d in days] == pytest.approx([0, 0, 0, 0, 0, 40000, 9000])
+        assert [d["required_litres"] for d in days] == pytest.approx([0, 0, 0, 0, 0, 42000, 9000])
+        assert [d["remaining_litres"] for d in days] == pytest.approx([0, 0, 0, 0, 0, 2000, 0])
+        assert [d["irrigation_status"] for d in days] == [
+            "NOT_REQUIRED", "NOT_REQUIRED", "NOT_REQUIRED", "NOT_REQUIRED",
+            "NOT_REQUIRED", "SCHEDULED", "COMPLETED"]
+        assert days[5]["irrigation_in_progress"] is True   # carries into day 7
+        assert days[6]["irrigation_in_progress"] is False  # cycle finished
+        assert set(days[0]) == {
+            "date", "et0_mm", "kc", "litres", "run_minutes", "stale",
+            "bucket_before_mm", "bucket_mm", "bucket_pct",
+            "required_litres", "required_run_minutes", "remaining_litres",
+            "remaining_run_minutes", "irrigation_in_progress", "irrigation_status",
+            "capacity_warning"}
+        # Soil as a percent of field capacity (70 mm): 63 mm -> 90 %, partial -> 97 %, full -> 100 %.
+        assert [d["bucket_pct"] for d in days] == pytest.approx([90, 80, 70, 60, 50, 97.142857, 100])
         assert client.get(f"/v1/plots/{PLOT_ID}/plan").json() == data
     forecast = next(r for r in calls if r.url.path == "/v1/forecast")
     assert dict(forecast.url.params) == {"lat": "31.25", "lon": "34.79", "days": "7"}
     assert {r.url.path for r in calls} == {f"/v1/plots/{PLOT_ID}", "/v1/soils/sand", "/v1/emitters/drip", "/v1/forecast"}
 
 
-def test_initial_soil_pct_starts_bucket_below_full_and_irrigates_day_one(upstream):
+def test_initial_soil_pct_starts_bucket_below_full_then_finishes_next_day(upstream):
     # capacity = 100 mm/m * 0.7 m = 70 mm, threshold 35 mm. A 40% start (28 mm)
-    # already sits below threshold, so day one irrigates and refills to full,
-    # unlike the default full-bucket start which waits days.
+    # already sits below threshold, so day one opens the cycle. The 49 mm refill
+    # (49000 L) exceeds one day's 40000 L, so day one is capped (1440 min, bucket
+    # 61) and the 9000 L deficit finishes on day two in 576 min.
     upstream["plot"]["planting_date"] = str(TODAY - timedelta(days=80))  # mid-season, Kc 1.15
     upstream["plot"]["initial_soil_pct"] = 40
     client, _ = client_for(upstream)
     with client:
         days = client.get(f"/v1/plots/{PLOT_ID}/plan").json()["days"]
-    assert days[0]["run_minutes"] > 0
-    assert days[0]["litres"] == pytest.approx(49000)  # (70 - 21) mm * 1000 m2
-    assert days[0]["bucket_mm"] == pytest.approx(70)  # refilled to capacity
+    assert days[0]["required_litres"] == pytest.approx(49000)
+    assert days[0]["litres"] == pytest.approx(40000)   # capped at one day's pumping
+    assert days[0]["run_minutes"] == 1440
+    assert days[0]["bucket_mm"] == pytest.approx(61)   # partial refill
+    assert days[0]["remaining_litres"] == pytest.approx(9000)
+    assert days[0]["irrigation_status"] == "SCHEDULED"
+    assert days[1]["litres"] == pytest.approx(16000)   # finishes the 9000 L plus day-2 use
+    assert days[1]["run_minutes"] == 576
+    assert days[1]["bucket_mm"] == pytest.approx(70)   # reaches capacity
+    assert days[1]["irrigation_status"] == "COMPLETED"
 
 
 def test_initial_soil_pct_defaults_to_full_when_registry_omits_it(upstream):
@@ -145,20 +169,33 @@ def test_rain_saturation_stale_and_runtime_ceiling(upstream):
     # Daily net balance: min(C, B + rain - ETc), then trigger/refill.
     assert days[0]["bucket_mm"] == 70
     assert days[0]["run_minutes"] == 0
-    assert days[1]["litres"] == pytest.approx(46000)
-    assert days[1]["run_minutes"] == 1656
+    # Day 2 demand is 46 mm (46000 L), above one day's 40000 L ceiling, so it is
+    # scheduled for the full 1440 min and 6000 L remain for the next day.
+    assert days[1]["required_litres"] == pytest.approx(46000)
+    assert days[1]["litres"] == pytest.approx(40000)
+    assert days[1]["run_minutes"] == 1440
+    assert days[1]["remaining_litres"] == pytest.approx(6000)
     assert all(d["stale"] for d in days)
 
 
-def test_pepper_root_depth_and_unbounded_demand(upstream):
+def test_pepper_root_depth_and_demand_bounded_by_capacity(upstream):
+    # Bell pepper, root 0.5 m, soil 100 mm/m -> capacity 50 mm. A 100 mm ET0 day
+    # (ETc 105 mm) would drive the raw balance to -55 mm, but the daily balance
+    # is clamped to 0, so the demand is bounded by capacity (50 mm = 50000 L),
+    # not the old 105000 L. A full 24 h day delivers only 40000 L, so the bucket
+    # reaches 40 mm and the hydraulic-capacity warning fires (the system cannot
+    # match the crop's own daily use).
     upstream["plot"].update(crop_id="bell-pepper", planting_date=str(TODAY - timedelta(days=80)))
     upstream["weather"]["days"][0]["et0_mm"] = 100
     client, _ = client_for(upstream)
     with client:
         day = client.get(f"/v1/plots/{PLOT_ID}/plan?days=1").json()["days"][0]
-    assert day["bucket_mm"] == 50
-    assert day["litres"] == 105000  # Do not discard demand when provisional bucket is negative.
-    assert day["run_minutes"] == 3780
+    assert day["required_litres"] == 50000     # bounded by capacity, not 105000
+    assert day["litres"] == 40000              # one day's hydraulic ceiling
+    assert day["run_minutes"] == 1440
+    assert day["bucket_mm"] == 40
+    assert day["remaining_litres"] == 10000
+    assert day["capacity_warning"] is True
 
 
 @pytest.mark.parametrize("days", ["0", "8", "-1", "abc", "1.5"])
@@ -259,9 +296,15 @@ def test_reference_hand_examples(upstream):
     client, _ = client_for(upstream)
     with client:
         days = client.get(f"/v1/plots/{PLOT_ID}/plan").json()["days"]
-    assert [d["bucket_mm"] for d in days[:6]] == pytest.approx([63.1, 56.2, 49.3, 42.4, 35.5, 70])
-    assert days[5]["litres"] == pytest.approx(41400)
-    assert days[5]["run_minutes"] == 1491
+    # Day 6's 41400 L refill exceeds one 24 h day (40000 L), so it is scheduled
+    # for 1440 min to 68.6 mm and day 7 finishes the 1400 L remainder in 299 min.
+    assert [d["bucket_mm"] for d in days[:6]] == pytest.approx([63.1, 56.2, 49.3, 42.4, 35.5, 68.6])
+    assert days[5]["required_litres"] == pytest.approx(41400)
+    assert days[5]["litres"] == pytest.approx(40000)
+    assert days[5]["run_minutes"] == 1440
+    assert days[6]["bucket_mm"] == pytest.approx(70)
+    assert days[6]["run_minutes"] == 299
+    assert days[6]["irrigation_status"] == "COMPLETED"
 
     upstream["weather"]["days"][0]["rain_mm"] = 100
     client, _ = client_for(upstream)

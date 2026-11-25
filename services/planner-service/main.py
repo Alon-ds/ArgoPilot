@@ -55,7 +55,7 @@ def create_app(settings: Settings | None = None, *, transport=None,
     async def plan(plot_id: UUID, days: int = Query(default=7, ge=1, le=7)):
         values = await inputs(api.state.client, settings, plot_id, days, clock())
         try:
-            return project(*values)
+            return project(*values, max_daily_minutes=settings.max_daily_runtime_minutes)
         except (ValueError, ArithmeticError) as exc:
             # Even finite upstream values can overflow during arithmetic.
             raise UpstreamUnavailable("registry-service/weather-service calculation") from exc
