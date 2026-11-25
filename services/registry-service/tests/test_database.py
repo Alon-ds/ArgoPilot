@@ -19,7 +19,7 @@ def test_seed_empty_database_and_refuse_overwrite(tmp_path):
         with database.connect_database() as connection:
             counts = [connection.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0]
                       for table in ("farms", "plots", "crops", "soils", "emitters")]
-            assert counts == [2, 4, 2, 3, 4]
+            assert counts == [2, 4, 3, 3, 4]
         with pytest.raises(SQLAlchemyError):
             runpy.run_module("seed", run_name="__main__")
         with database.connect_database() as connection:

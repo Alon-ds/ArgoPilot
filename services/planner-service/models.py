@@ -12,7 +12,7 @@ Nonnegative = Annotated[float, Field(ge=0, allow_inf_nan=False)]
 
 class Plot(BaseModel):
     id: UUID
-    crop_id: Literal["tomato", "bell-pepper"]
+    crop_id: Literal["tomato", "bell-pepper", "test"]
     planting_date: date
     soil_id: str = Field(min_length=1)
     emitter_id: str = Field(min_length=1)

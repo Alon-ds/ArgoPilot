@@ -12,7 +12,7 @@ def seed():
         for statement in sql.split(";"):
             if statement.strip() and not statement.strip().startswith("PRAGMA"):
                 connection.execute(text(statement))
-    print("Seeded 15 rows: 2 farms, 4 plots, 2 crops, 3 soils, 4 emitters")
+    print("Seeded 16 rows: 2 farms, 4 plots, 3 crops, 3 soils, 4 emitters")
 
 
 if __name__ == "__main__":

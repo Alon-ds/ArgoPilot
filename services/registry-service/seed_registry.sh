@@ -60,7 +60,8 @@ CREATE TABLE plots (
 
 INSERT INTO crops (id, name) VALUES
   ('tomato', 'Tomato'),
-  ('bell-pepper', 'Bell pepper');
+  ('bell-pepper', 'Bell pepper'),
+  ('test', 'Test (drains 15% per day)');
 
 INSERT INTO soils (id, name, available_water_mm_per_m) VALUES
   ('sand', 'Sand', 83),
@@ -108,4 +109,4 @@ INSERT INTO plots (
 SQL
 
 echo "Wrote $db"
-echo "  2 farms, 4 plots, 2 crops, 3 soils, 4 emitters"
+echo "  2 farms, 4 plots, 3 crops, 3 soils, 4 emitters"

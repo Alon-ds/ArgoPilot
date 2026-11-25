@@ -12,7 +12,7 @@ import test_api
 def test_postgres_contract():
     async def check():
         request = test_api.RegistryTests().request
-        for table, count in (("farms", 2), ("plots", 4), ("crops", 2), ("soils", 3), ("emitters", 4)):
+        for table, count in (("farms", 2), ("plots", 4), ("crops", 3), ("soils", 3), ("emitters", 4)):
             status, _, rows = await request("GET", f"/v1/{table}")
             assert status == 200 and len(rows) == count
             status, _, row = await request("GET", f"/v1/{table}/{rows[0]['id']}")

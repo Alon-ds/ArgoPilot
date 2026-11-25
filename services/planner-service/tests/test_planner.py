@@ -112,6 +112,28 @@ def test_initial_soil_pct_defaults_to_full_when_registry_omits_it(upstream):
     assert days[0]["bucket_mm"] == pytest.approx(63)  # 70 full - 7 ETc, not refilled
 
 
+def test_test_crop_drains_fifteen_percent_per_day_regardless_of_weather(upstream):
+    # The synthetic 'test' crop depletes 15 % of the current bucket each day and
+    # ignores weather ET0: the sequence is deterministic. With a full start
+    # (70 mm capacity) each day keeps 85 %: 59.5, 50.575, 42.99, 36.54, and then
+    # 31.06 would land below the 35 mm trigger, so day 5 irrigates and refills.
+    # It reports the drain as et0_mm with kc=1 so ET0 x Kc equals the soil drop.
+    upstream["plot"]["crop_id"] = "test"
+    upstream["weather"]["days"] = [
+        {"date": str(TODAY + timedelta(days=i)), "et0_mm": 50, "rain_mm": 0}
+        for i in range(7)
+    ]
+    client, _ = client_for(upstream)
+    with client:
+        days = client.get(f"/v1/plots/{PLOT_ID}/plan").json()["days"]
+    assert [d["bucket_mm"] for d in days[:4]] == pytest.approx([59.5, 50.575, 42.98875, 36.5404375])
+    assert days[4]["litres"] > 0  # fifth day crosses the half-capacity trigger
+    assert days[4]["bucket_mm"] == pytest.approx(70)  # and refills to full
+    assert days[0]["kc"] == 1.0  # synthetic crop reports a unit coefficient
+    assert days[0]["et0_mm"] == pytest.approx(10.5)  # 15 % of the 70 mm full bucket
+    assert days[0]["et0_mm"] * days[0]["kc"] == pytest.approx(70 - days[0]["bucket_mm"])
+
+
 def test_rain_saturation_stale_and_runtime_ceiling(upstream):
     upstream["weather"]["stale"] = True
     upstream["weather"]["days"][0].update(et0_mm=200, rain_mm=300)

@@ -80,7 +80,7 @@ class RegistryTests(unittest.IsolatedAsyncioTestCase):
         self.assert_problem(await self.request("GET", "/missing"), 404, "NOT_FOUND")
 
     async def test_catalogs_and_rejected_writes(self):
-        for table, count in (("crops", 2), ("soils", 3), ("emitters", 4)):
+        for table, count in (("crops", 3), ("soils", 3), ("emitters", 4)):
             with self.subTest(table=table):
                 status, _, items = await self.request("GET", f"/v1/{table}")
                 self.assertEqual(status, 200)
