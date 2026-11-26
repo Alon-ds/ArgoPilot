@@ -410,3 +410,56 @@ def test_invariants_hold_under_insufficient_capacity():
         assert 0 <= d["run_minutes"] <= 1440
         assert d["remaining_litres"] >= 0 and d["remaining_run_minutes"] >= 0
         assert d["bucket_pct"] <= 100 + 1e-6
+
+
+def test_refill_spans_more_than_a_full_day_and_reports_bucket_pct_each_day():
+    # A refill too big for one 24 h day: a near-empty large bucket (C = 150 mm/m
+    # x 0.7 m = 105 mm) needs ~95650 L but one day pumps only 40000 L. The cycle
+    # runs the full 1440 min for two straight days, carries the deficit forward,
+    # finishes on day three, and the bucket percentage is detailed on every day.
+    days = _project([{"date": str(TODAY + timedelta(days=i)), "et0_mm": 1.0, "rain_mm": 0}
+                     for i in range(4)], pct=10, soil_mm=150)
+
+    # Days 1-2 are capped at a full day of pumping; the deficit carries forward.
+    assert [d["run_minutes"] for d in days] == [1440, 1440, 647, 0]
+    assert [d["litres"] for d in days[:2]] == pytest.approx([40000, 40000])
+    assert [d["irrigation_status"] for d in days] == [
+        "SCHEDULED", "CONTINUING", "COMPLETED", "NOT_REQUIRED"]
+
+    # The remaining water shrinks each active day, then reaches zero when full.
+    assert [d["remaining_litres"] for d in days] == pytest.approx([55650, 16800, 0, 0])
+
+    # Bucket level and percentage are reported on every day, rising to 100% on
+    # completion then dropping once irrigation stops.
+    assert [d["bucket_mm"] for d in days] == pytest.approx([49.35, 88.2, 105.0, 103.85])
+    assert [d["bucket_pct"] for d in days] == pytest.approx([47.0, 84.0, 100.0, 98.9047619])
+    assert days[2]["irrigation_in_progress"] is False  # cycle closed on day three
+
+
+def test_refill_drags_beyond_the_seven_day_forecast_horizon():
+    # A very large bucket (C = 500 mm/m x 0.7 m = 350 mm = 350000 L) starting
+    # nearly empty cannot be refilled within the 7-day horizon: one day pumps
+    # only 40000 L, so every day runs the full 1440 min, the bucket climbs ~38.85
+    # mm/day but never reaches capacity, and the plan ends still irrigating. This
+    # is a slow refill, not an under-capacity plot: the daily cap (40000 L) far
+    # exceeds the crop's daily use (~1150 L), so no capacity_warning fires.
+    days = _project([{"date": str(TODAY + timedelta(days=i)), "et0_mm": 1.0, "rain_mm": 0}
+                     for i in range(7)], pct=10, soil_mm=500)
+
+    assert len(days) == 7
+    # Every day is a full day of pumping; none of them completes the cycle.
+    assert all(d["run_minutes"] == 1440 for d in days)
+    assert all(d["litres"] == pytest.approx(40000) for d in days)
+    assert not any(d["capacity_warning"] for d in days)
+
+    # The bucket rises monotonically but never fills within the horizon.
+    pct = [d["bucket_pct"] for d in days]
+    assert pct == sorted(pct) and max(pct) < 100
+    assert pct[0] == pytest.approx(21.1) and pct[-1] == pytest.approx(87.7)
+
+    # The deficit shrinks each day yet stays positive; the last day is still an
+    # open, in-progress cycle that would continue past the forecast.
+    rem = [d["remaining_litres"] for d in days]
+    assert rem == sorted(rem, reverse=True) and rem[-1] == pytest.approx(43050)
+    assert days[-1]["irrigation_status"] == "CONTINUING"
+    assert days[-1]["irrigation_in_progress"] is True
