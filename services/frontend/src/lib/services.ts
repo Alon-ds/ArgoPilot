@@ -16,7 +16,13 @@ const emitterSchema = z.object({ id: z.string().min(1), name: z.string().min(1),
 const nonnegative = z.number().nonnegative();
 const daySchema = z.object({
   date: z.iso.date(), et0_mm: nonnegative, kc: nonnegative, litres: nonnegative,
-  run_minutes: nonnegative, stale: z.boolean(), bucket_mm: nonnegative,
+  run_minutes: nonnegative, stale: z.boolean(),
+  bucket_before_mm: nonnegative, bucket_mm: nonnegative, bucket_pct: nonnegative,
+  required_litres: nonnegative, required_run_minutes: nonnegative,
+  remaining_litres: nonnegative, remaining_run_minutes: nonnegative,
+  irrigation_in_progress: z.boolean(),
+  irrigation_status: z.enum(["NOT_REQUIRED", "SCHEDULED", "CONTINUING", "COMPLETED"]),
+  capacity_warning: z.boolean(),
 });
 const planSchema = z.object({ plot_id: z.string().min(1), days: z.array(daySchema).length(7) }).superRefine((plan, context) => {
   const today = new Intl.DateTimeFormat("en-CA", { timeZone: config.PLAN_TIMEZONE, year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
@@ -91,6 +97,20 @@ async function mutate<T>(path: string, body: unknown, schema: z.ZodType<T>): Pro
 
 export const createFarm = (name: string) => mutate("/v1/farms", { name }, farmSchema);
 export const createPlot = (plot: Record<string, unknown>) => mutate("/v1/plots", plot, plotSchema);
+
+export async function deletePlot(id: string): Promise<{ ok: boolean; message?: string }> {
+  try {
+    const response = await fetch(`${config.REGISTRY_URL.replace(/\/$/, "")}/v1/plots/${encodeURIComponent(id)}`, {
+      method: "DELETE", cache: "no-store", signal: AbortSignal.timeout(config.SERVICE_TIMEOUT_MS),
+      headers: { Accept: "application/json" }, redirect: "error",
+    });
+    if (response.status === 204) return { ok: true };
+    if (response.status === 404) return { ok: false, message: "This plot no longer exists." };
+    return { ok: false, message: `The registry refused the delete (HTTP ${response.status}).` };
+  } catch {
+    return { ok: false, message: "Registry service could not be reached or timed out. Nothing was deleted." };
+  }
+}
 export const getCrops = () => request("Registry", "/v1/crops", z.array(cropSchema));
 export const getSoils = () => request("Registry", "/v1/soils", z.array(soilSchema));
 export const getEmitters = () => request("Registry", "/v1/emitters", z.array(emitterSchema));

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getFarms, getPlots } from "@/lib/services";
 import { number } from "@/lib/format";
 import { ServiceError } from "@/components/service-error";
+import { DeletePlotButton } from "@/components/delete-plot-button";
 export default async function HomePage() {
   const [farms, plots] = await Promise.all([getFarms(), getPlots()]);
   return <>
@@ -15,10 +16,13 @@ export default async function HomePage() {
       return <section className="farm" key={farm.id} aria-labelledby={`farm-${farm.id}`}>
         <div className="farm-heading"><h2 id={`farm-${farm.id}`}>{farm.name}</h2>{plots.ok && <span>{farmPlots.length} {farmPlots.length === 1 ? "plot" : "plots"}</span>}</div>
         {plots.ok && farmPlots.length === 0 && <p className="empty">No plots registered for this farm.</p>}
-        <ul className="plot-list">{farmPlots.map((plot) => <li key={plot.id}><Link href={`/plots/${encodeURIComponent(plot.id)}`} prefetch={false}>
-          <div><h3>{plot.name}</h3><p>{plot.crop_id.replaceAll("_", " ").replaceAll("-", " ")} · {number(plot.area_m2)} m²</p></div>
-          <span className="plot-link-label">View plan <span aria-hidden="true">›</span></span>
-        </Link></li>)}</ul>
+        <ul className="plot-list">{farmPlots.map((plot) => <li key={plot.id}>
+          <Link href={`/plots/${encodeURIComponent(plot.id)}`} prefetch={false}>
+            <div><h3>{plot.name}</h3><p>{plot.crop_id.replaceAll("_", " ").replaceAll("-", " ")} · {number(plot.area_m2)} m²</p></div>
+            <span className="plot-link-label">View plan <span aria-hidden="true">›</span></span>
+          </Link>
+          <DeletePlotButton id={plot.id} name={plot.name} />
+        </li>)}</ul>
       </section>;
     })}
   </>;

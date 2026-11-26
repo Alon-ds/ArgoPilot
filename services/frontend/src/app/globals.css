@@ -36,8 +36,14 @@ h1 { font-size: clamp(28px, 5vw, 40px); font-weight: 650; letter-spacing: -1px; 
 .farm-heading h2 { font-size: 23px; font-weight: 650; overflow-wrap: anywhere; min-width: 0; }
 .farm-heading > span { color: #526c65; font-size: 14px; flex-shrink: 0; }
 .plot-list { list-style: none; margin: 0; padding: 0; }
-.plot-list li { border-bottom: 1px solid #d6e2df; }
-.plot-list a { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 22px 12px; min-height: 84px; }
+.plot-list li { border-bottom: 1px solid #d6e2df; display: flex; align-items: stretch; gap: 8px; }
+.plot-list a { flex: 1; min-width: 0; display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 22px 12px; min-height: 84px; }
+.plot-delete-form { display: flex; align-items: center; padding-inline: 8px; }
+.plot-delete { font: inherit; font-size: 13px; color: #763818; background: transparent; border: 1px solid transparent; border-radius: 6px; padding: 8px 10px; min-height: 36px; cursor: pointer; white-space: nowrap; }
+.plot-delete:hover:not(:disabled) { background: #fbeee7; border-color: #dcac88; }
+.plot-delete:focus-visible { outline: 3px solid #176187; outline-offset: 2px; }
+.plot-delete:disabled { color: #526c65; cursor: progress; }
+.plot-delete-error { font-size: 12px; color: #763818; margin-left: 8px; max-width: 20ch; }
 .plot-list a:hover { background: #edf3f2; }
 .plot-list a > div { min-width: 0; overflow-wrap: anywhere; }
 .plot-list h3 { font-size: 18px; font-weight: 600; }
@@ -55,6 +61,15 @@ h1 { font-size: clamp(28px, 5vw, 40px); font-weight: 650; letter-spacing: -1px; 
 .planning-assumption { margin-top: 16px; border-left: 4px solid #176187; background: #edf3f2; padding: 12px 16px; font-size: 13px; }
 .planning-assumption strong { color: #154b3b; }
 .planning-assumption p { margin-top: 4px; max-width: 75ch; }
+.today-progress { display: flex; flex-wrap: wrap; gap: 10px 32px; margin-top: 16px; }
+.today-progress div { min-width: 0; }
+.today-progress dt { color: #d0e5dd; font-size: 13px; }
+.today-progress dd { margin: 2px 0 0; font-size: 18px; font-weight: 650; }
+.today-warning { margin-top: 18px; padding: 12px 16px; border-radius: 6px; background: #fff0c5; color: #704700; }
+.today-warning p { margin-top: 4px; font-size: 13px; max-width: 65ch; }
+.horizon-note { margin-top: 16px; border-left: 4px solid #176187; background: #edf3f2; padding: 12px 16px; font-size: 13px; }
+.horizon-note strong { color: #154b3b; }
+.horizon-note p { margin-top: 4px; max-width: 75ch; }
 .today-stale { margin-top: 18px; padding-top: 14px; border-top: 1px solid #5f8578; }
 .today-stale p { margin-top: 6px; font-size: 13px; color: #fff0c5; max-width: 65ch; }
 .stale { background: #fff0c5; color: #704700; border-color: #dfbe72; font-size: 11px; line-height: 1.4; white-space: normal; }

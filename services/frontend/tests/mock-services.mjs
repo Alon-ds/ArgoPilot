@@ -30,6 +30,10 @@ function handle(req, res, body) {
   if (url.pathname === "/registry/v1/emitters") return send(emitters);
   if (url.pathname === "/registry/v1/farms") return send([farm, { id: "empty-farm", name: "New farm" }]);
   if (url.pathname === "/registry/v1/plots") return send([plot]);
+  if (req.method === "DELETE" && url.pathname.startsWith("/registry/v1/plots/")) {
+    if (mode === "delete-missing") return send(problem(404, "Not Found", "Plot not found", "NOT_FOUND"), 404);
+    res.statusCode = 204; res.end(); return;
+  }
   if (url.pathname.startsWith("/registry/v1/plots/")) return send(plot);
   if (url.pathname.includes("/plan")) {
     if (mode === "timeout") return;
@@ -37,7 +41,30 @@ function handle(req, res, body) {
     if (mode === "unknown") return send({ detail: "Plot not found", code: "NOT_FOUND" }, 404);
     const date = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Jerusalem", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
     const today = Date.parse(`${date}T00:00:00Z`) - (mode === "yesterday" ? 86400000 : 0);
-    const days = Array.from({ length: 7 }, (_, i) => ({ date: new Date(today + i * 86400000).toISOString().slice(0, 10), et0_mm: 6, kc: 1.15, litres: i === 0 && mode !== "dry" ? 6900 : 0, run_minutes: i === 0 && mode !== "dry" ? 38 : 0, stale: mode === "stale", bucket_mm: 35 }));
+    const progressing = mode === "inprogress";
+    const day = (i) => {
+      const iso = new Date(today + i * 86400000).toISOString().slice(0, 10);
+      // An in-progress cycle: a capped 288 L / 1440 min today with a big
+      // remainder, still unfinished on the last forecast day (horizon overflow).
+      if (progressing) {
+        const active = i === 0 || i === 6;
+        return { date: iso, et0_mm: 4.7, kc: 0.15, litres: active ? 288 : 0,
+          run_minutes: active ? 1440 : 0, stale: false,
+          bucket_before_mm: 28.5, bucket_mm: active ? 31.4 : 31.4, bucket_pct: 54,
+          required_litres: 2955.55, required_run_minutes: 14778,
+          remaining_litres: active ? 2667.55 : 0, remaining_run_minutes: active ? 13338 : 0,
+          irrigation_in_progress: active, irrigation_status: i === 0 ? "SCHEDULED" : active ? "CONTINUING" : "NOT_REQUIRED",
+          capacity_warning: active };
+      }
+      const irrigating = i === 0 && mode !== "dry";
+      return { date: iso, et0_mm: 6, kc: 1.15, litres: irrigating ? 6900 : 0,
+        run_minutes: irrigating ? 38 : 0, stale: mode === "stale",
+        bucket_before_mm: 35, bucket_mm: irrigating ? 70 : 35, bucket_pct: irrigating ? 100 : 50,
+        required_litres: irrigating ? 6900 : 0, required_run_minutes: irrigating ? 38 : 0,
+        remaining_litres: 0, remaining_run_minutes: 0, irrigation_in_progress: false,
+        irrigation_status: irrigating ? "COMPLETED" : "NOT_REQUIRED", capacity_warning: false };
+    };
+    const days = Array.from({ length: 7 }, (_, i) => day(i));
     if (mode === "invalid") delete days[0].run_minutes;
     return send({ plot_id: mode === "mismatch" ? "different-plot" : plot.id, days: mode === "short" ? days.slice(0, 1) : days });
   }

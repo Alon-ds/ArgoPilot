@@ -15,7 +15,6 @@ test("375 px: today is above the fold, table fits, browser calls no services", a
   await page.goto(plotPath);
   const today = page.getByRole("heading", { name: "Water for 38 minutes" });
   await expect(today).toBeInViewport();
-  await expect(page.getByLabel("Planning assumption")).toContainText("no sensor readings or irrigation history");
   await expect(page.getByRole("row")).toHaveCount(8);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   expect(serviceRequests).toEqual([]);
@@ -50,7 +49,7 @@ async function fillPlot(page: import("@playwright/test").Page) {
   await page.getByLabel("Area (m²)").fill("1200");
   await page.getByLabel("Planting date").fill("2026-03-01");
   await page.getByLabel("Crop").selectOption("tomato");
-  await page.getByLabel("Soil").selectOption("loam");
+  await page.getByLabel("Soil", { exact: true }).selectOption("loam");
   await page.getByLabel("Emitter", { exact: true }).selectOption("dripnet-pc-1.0");
   await page.getByLabel("Row spacing (m)").fill("1.5");
   await page.getByLabel("Emitter spacing (m)").fill("0.4");
@@ -93,6 +92,17 @@ test("the registry's validation message reaches the grower", async ({ page, requ
   await page.getByRole("button", { name: "Add plot" }).click();
   await expect(page.getByText(/planting_date must not be in the future/)).toBeVisible();
   await expect(page.getByText(/saved\./)).toHaveCount(0);
+});
+
+test("an out-of-range field is cleared on error while the rest is kept", async ({ page }) => {
+  await page.goto("/manage");
+  await fillPlot(page);
+  await page.getByLabel("Row spacing (m)").fill("50"); // above the 5 m bound
+  await page.getByRole("button", { name: "Add plot" }).click();
+  await expect(page.getByText(/Row spacing must be at most 5/)).toBeVisible();
+  await expect(page.getByLabel("Plot name")).toHaveValue("West block"); // kept
+  await expect(page.getByLabel("Soil", { exact: true })).toHaveValue("loam"); // kept
+  await expect(page.getByLabel("Row spacing (m)")).toHaveValue(""); // only this cleared
 });
 
 test("a duplicate plot name is reported, not silently dropped", async ({ page, request }) => {
@@ -140,4 +150,54 @@ test("registry errors are visible but do not hide an available plan", async ({ p
   await expect(page.locator('[data-slot="alert"]').first()).toContainText("Registry");
   await page.goto(plotPath);
   await expect(page.getByRole("heading", { name: "Water for 38 minutes" })).toBeVisible();
+});
+test("a plot can be deleted from the farm list after confirming", async ({ page }) => {
+  page.on("dialog", (dialog) => dialog.accept());
+  await page.goto("/");
+  const remove = page.getByRole("button", { name: "Delete South tomato block" });
+  await expect(remove).toBeVisible();
+  await remove.click();
+  // Registry returns 204; the action revalidates and shows no error.
+  await expect(page.getByText(/no longer exists|refused the delete|could not be reached/)).toHaveCount(0);
+});
+test("a delete that the dialog cancels is not sent", async ({ page }) => {
+  page.on("dialog", (dialog) => dialog.dismiss());
+  await page.goto("/");
+  await page.getByRole("button", { name: "Delete South tomato block" }).click();
+  await expect(page.getByText(/no longer exists|refused the delete|could not be reached/)).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Delete South tomato block" })).toBeVisible();
+});
+test("a failed plot delete surfaces an error, not a silent drop", async ({ page, request }) => {
+  await request.get("http://127.0.0.1:18080/mode?value=delete-missing");
+  page.on("dialog", (dialog) => dialog.accept());
+  await page.goto("/");
+  await page.getByRole("button", { name: "Delete South tomato block" }).click();
+  await expect(page.getByText("This plot no longer exists.")).toBeVisible();
+});
+
+test("an in-progress cycle shows scheduled, remaining and continues-tomorrow", async ({ page, request }) => {
+  await request.get("http://127.0.0.1:18080/mode?value=inprogress");
+  await page.goto(plotPath);
+  await expect(page.getByText("Irrigation in progress")).toBeVisible();
+  await expect(page.getByText(/Scheduled today/)).toBeVisible();
+  await expect(page.getByText(/Remaining water/)).toBeVisible();
+  await expect(page.getByText(/Continues tomorrow/)).toBeVisible();
+});
+
+test("an in-progress cycle shows the hydraulic capacity warning", async ({ page, request }) => {
+  await request.get("http://127.0.0.1:18080/mode?value=inprogress");
+  await page.goto(plotPath);
+  await expect(page.getByText(/cannot supply enough water/i)).toBeVisible();
+});
+
+test("an unfinished cycle at the last forecast day shows the horizon note", async ({ page, request }) => {
+  await request.get("http://127.0.0.1:18080/mode?value=inprogress");
+  await page.goto(plotPath);
+  await expect(page.getByText(/beyond the forecast period/i)).toBeVisible();
+});
+
+test("large runtimes render as hours and minutes", async ({ page, request }) => {
+  await request.get("http://127.0.0.1:18080/mode?value=inprogress");
+  await page.goto(plotPath);
+  await expect(page.getByText(/24h 0m/)).toBeVisible();
 });

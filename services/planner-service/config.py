@@ -13,6 +13,9 @@ class Settings(BaseSettings):
     weather_url: AnyHttpUrl
     upstream_timeout_seconds: float = Field(default=5, gt=0, allow_inf_nan=False)
     planner_timezone: str = "Asia/Jerusalem"
+    # Most minutes a drip system may run in one day. Defaults to a full 24 h;
+    # lower it to an operational ceiling (e.g. 720 for 12 h) via the environment.
+    max_daily_runtime_minutes: int = Field(default=1440, gt=0, le=1440)
 
     @field_validator("planner_timezone")
     @classmethod

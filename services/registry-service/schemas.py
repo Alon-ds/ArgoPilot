@@ -23,6 +23,12 @@ Longitude = Annotated[float, Field(ge=-180, le=180, allow_inf_nan=False)]
 EmitterSpacing = Annotated[float, Field(gt=0, le=2, allow_inf_nan=False)]
 RowSpacing = Annotated[float, Field(gt=0, le=5, allow_inf_nan=False)]
 
+# How full the soil-water bucket is assumed to be on day one, as a percent of
+# field capacity. Lets a grower who knows the field is partly dry start the
+# projection below full instead of the 100 default; a sensor feed would later
+# replace this. 0 = empty (irrigate immediately), 100 = full.
+SoilPercent = Annotated[float, Field(ge=0, le=100, allow_inf_nan=False)]
+
 
 class InputModel(BaseModel):
     model_config = ConfigDict(extra="forbid")
@@ -71,6 +77,7 @@ class PlotCreate(PlantingDateModel):
     emitter_id: Name
     lat: Latitude
     lon: Longitude
+    initial_soil_pct: SoilPercent = 100
 
 
 class PlotPatch(PatchModel, PlantingDateModel):
@@ -100,6 +107,7 @@ class Plot(BaseModel):
     emitter_id: str
     lat: Latitude
     lon: Longitude
+    initial_soil_pct: SoilPercent
 
 
 class Crop(BaseModel):
